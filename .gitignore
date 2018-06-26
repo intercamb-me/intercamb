@@ -1,0 +1,6 @@
+/config.yml
+/intecambio.log
+/newrelic_agent.log
+/node_modules
+/npm-debug.log
+/public

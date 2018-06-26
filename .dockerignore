@@ -1,0 +1,14 @@
+/.dockerignore
+/.eslintignore
+/.eslintrc
+/.git
+/.gitignore
+/config.yml
+/docker-compose.yml
+/Dockerfile
+/intecambio.log
+/newrelic_agent.log
+/node_modules
+/npm-debug.log
+/public
+/tasks

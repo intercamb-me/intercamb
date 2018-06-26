@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "Intercambio Backend",
+      "script": "app.js",
+      "exec_mode": "cluster",
+      "instances": 0
+    }
+  ]
+}
