@@ -83,68 +83,65 @@ const Client = new Schema({
     city: {type: String},
     state: {type: String},
     zip_code: {type: String},
-  })},
+  }, {_id: false})},
   personal_data: {type: new Schema({
     nationality: {type: String},
     place_of_birth: {type: new Schema({
       city: {type: String},
       state: {type: String},
-    })},
+    }, {_id: false})},
     identity_card: {type: new Schema({
       number: {type: String},
       issuing_authority: {type: String},
       state: {type: String},
-    })},
+    }, {_id: false})},
     cpf_number: {type: String},
     passport_number: {type: String},
     birthdate: {type: Date},
     gender: {type: String},
     civil_state: {type: String},
     number_of_children: {type: Number},
-  })},
+  }, {_id: false})},
   family_data: {type: new Schema({
     father: {type: new Schema({
       name: {type: String},
       education_level: {type: String},
       occupation: {type: String},
       employment_situation: {type: String},
-    })},
+    }, {_id: false})},
     mother: {type: new Schema({
       name: {type: String},
       education_level: {type: String},
       occupation: {type: String},
       employment_situation: {type: String},
-    })},
-  })},
+    }, {_id: false})},
+  }, {_id: false})},
   academic_data: {type: new Schema({
     high_school: {type: new Schema({
       school: {type: String},
       city: {type: String},
       state: {type: String},
       conclusion_year: {type: String},
-    })},
+    }, {_id: false})},
     higher_education: {type: new Schema({
       institution: {type: String},
       course: {type: String},
       city: {type: String},
       state: {type: String},
       conclusion_year: {type: String},
-    })},
-  })},
+    }, {_id: false})},
+  }, {_id: false})},
   intended_course: {type: new Schema({
     name: {type: String},
     institution: {type: String},
     preferred_shift: {type: String},
     alternative_shift: {type: String},
-  })},
+  }, {_id: false})},
   additional_information: {type: new Schema({
     disabilities: {type: String},
     arrival_date: {type: String},
-  })},
+  }, {_id: false})},
 });
-Client.methods.getFullName = function () {
-  return `${this.forename} ${this.surname}`;
-};
 
 exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) => {
   delete account.password;

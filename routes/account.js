@@ -25,7 +25,6 @@ async function getCurrentAccount(req, res) {
     await decodeToken(req);
     if (req.account) {
       const account = await accountService.getAccount(req.account.id);
-      console.log(account);
       res.json(account);
     } else {
       res.json(null);
