@@ -2,15 +2,17 @@
 
 const clientQueries = require('database/queries/client');
 const {Client} = require('models');
+const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
+const UNALLOWED_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date']
 
-exports.listClients = async (company) => {
-  return clientQueries.findClients({company: company.id}, {select: 'forename surname email phone photo_url'});
+exports.listClients = async (company, options) => {
+  return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
 };
 
-exports.getClient = async (company, id) => {
-  return clientQueries.findClient({_id: id, company: company.id});
+exports.getClient = async (id, options) => {
+  return clientQueries.getClient(id, options);
 };
 
 exports.createClient = async (company, data) => {
@@ -21,8 +23,12 @@ exports.createClient = async (company, data) => {
   return client.save();
 };
 
-exports.updateClient = async () => {
-
+exports.updateClient = async (client, data) => {
+  const attrs = _.omit(data, UNALLOWED_ATTRS);
+  const loadedClient = await this.getClient(client.id);
+  await loadedClient.update(attrs, {runValidators: true});
+  loadedClient.set(attrs);
+  return loadedClient;
 };
 
 exports.removeClient = async () => {

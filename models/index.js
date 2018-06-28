@@ -4,6 +4,7 @@ const settings = require('configs/settings');
 const constants = require('utils/constants');
 const {logger} = require('@ayro/commons');
 const mongoose = require('mongoose');
+const DateOnly = require('mongoose-dateonly')(mongoose);
 const Promise = require('bluebird');
 const _ = require('lodash');
 
@@ -97,7 +98,7 @@ const Client = new Schema({
     }, {_id: false})},
     cpf_number: {type: String},
     passport_number: {type: String},
-    birthdate: {type: Date},
+    birthdate: {type: DateOnly},
     gender: {type: String},
     civil_state: {type: String},
     number_of_children: {type: Number},
@@ -121,14 +122,14 @@ const Client = new Schema({
       school: {type: String},
       city: {type: String},
       state: {type: String},
-      conclusion_year: {type: String},
+      conclusion_year: {type: Number},
     }, {_id: false})},
     higher_education: {type: new Schema({
       institution: {type: String},
       course: {type: String},
       city: {type: String},
       state: {type: String},
-      conclusion_year: {type: String},
+      conclusion_year: {type: Number},
     }, {_id: false})},
   }, {_id: false})},
   intended_course: {type: new Schema({
@@ -139,7 +140,7 @@ const Client = new Schema({
   }, {_id: false})},
   additional_information: {type: new Schema({
     disabilities: {type: String},
-    arrival_date: {type: String},
+    arrival_date: {type: DateOnly},
   }, {_id: false})},
 });
 
