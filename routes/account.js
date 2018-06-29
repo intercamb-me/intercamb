@@ -5,7 +5,7 @@ const {accountAuthenticated, decodeToken} = require('routes/middlewares');
 const accountService = require('services/account');
 const session = require('database/session');
 const errors = require('utils/errors');
-const {logger} = require('@ayro/commons');
+const logger = require('utils/logger');
 const multer = require('multer');
 
 const upload = multer({dest: settings.uploadsPath});

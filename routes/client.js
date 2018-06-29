@@ -3,10 +3,9 @@
 const {accountAuthenticated, clientBelongsToCompany} = require('routes/middlewares');
 const accountService = require('services/account');
 const clientService = require('services/client');
-const constants = require('utils/constants');
 const errors = require('utils/errors');
+const logger = require('utils/logger');
 const {Company, Client} = require('models');
-const {logger} = require('@ayro/commons');
 
 async function listClients(req, res) {
   try {
@@ -37,7 +36,7 @@ async function createClient(req, res) {
     const client = await clientService.createClient(company, req.body);
     res.json(client);
   } catch (err) {
-    logger.error(err);
+    logger.log({level: 'error', message: err});
     errors.respondWithError(res, err);
   }
 }
@@ -64,12 +63,24 @@ async function removeClient(req, res) {
   }
 }
 
+async function listDocuments(req, res) {
+  try {
+    const client = new Company({id: req.params.client});
+    const documents = await clientService.listDocuments(client);
+    res.json(documents);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 module.exports = (router, app) => {
   router.get('/', accountAuthenticated, listClients);
   router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
   router.post('/', accountAuthenticated, createClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
+  router.get('/:client/documents', [accountAuthenticated, clientBelongsToCompany], listDocuments);
 
   app.use('/clients', router);
 };

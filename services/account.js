@@ -2,6 +2,7 @@
 
 const accountQueries = require('database/queries/account');
 const {Account} = require('models');
+const errors = require('utils/errors');
 const crypt = require('utils/crypt');
 
 const DEFAULT_ICON_URL = 'https://cdn.ayro.io/images/account_default_logo.png';

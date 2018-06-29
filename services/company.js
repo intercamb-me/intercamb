@@ -19,7 +19,7 @@ exports.createCompany = async (account, name) => {
   await company.save();
   await account.update({company: company.id}, {runValidators: true});
   return company;
-}
+};
 
 exports.updateCompany = async () => {
 

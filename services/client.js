@@ -1,11 +1,11 @@
 'use strict';
 
 const clientQueries = require('database/queries/client');
-const {Client} = require('models');
+const {Client, Document} = require('models');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
-const UNALLOWED_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date']
+const UNALLOWED_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
 
 exports.listClients = async (company, options) => {
   return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
@@ -16,11 +16,70 @@ exports.getClient = async (id, options) => {
 };
 
 exports.createClient = async (company, data) => {
+  const now = new Date();
   const client = new Client(data);
   client.company = company.id;
-  client.registration_date = new Date();
+  client.registration_date = now;
   client.photo_url = DEFAULT_PHOTO_URL;
-  return client.save();
+  await client.save();
+  const contract = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'contract',
+    status: 'pending',
+    registration_date: now,
+  });
+  const identityCard = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'identity',
+    status: 'pending',
+    registration_date: now,
+  });
+  const passport = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'passport',
+    status: 'pending',
+    registration_date: now,
+  });
+  const birthCertificate = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'birth_certificate',
+    status: 'pending',
+    registration_date: now,
+  });
+  const highSchoolCertificate = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'high_school_certificate',
+    status: 'pending',
+    registration_date: now,
+  });
+  const highSchoolHistoric = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'high_school_historic',
+    status: 'pending',
+    registration_date: now,
+  });
+  const nativeCriminalRecords = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'native_criminal_records',
+    status: 'pending',
+    registration_date: now,
+  });
+  const foreignCriminalRecords = new Document({
+    company: company.id,
+    client: client.id,
+    type: 'foreign_criminal_records',
+    status: 'pending',
+    registration_date: now,
+  });
+  await Document.insertMany([contract, identityCard, passport, birthCertificate, highSchoolCertificate, highSchoolHistoric, nativeCriminalRecords, foreignCriminalRecords]);
+  return client;
 };
 
 exports.updateClient = async (client, data) => {
@@ -33,4 +92,8 @@ exports.updateClient = async (client, data) => {
 
 exports.removeClient = async () => {
 
+};
+
+exports.listDocuments = async (client, options) => {
+  return clientQueries.findDocuments({client: client.id}, options);
 };

@@ -2,10 +2,9 @@
 
 require('app-module-path/register');
 
-const {logger} = require('@ayro/commons');
 const settings = require('configs/settings');
 const routes = require('configs/routes');
-const path = require('path');
+const logger = require('utils/logger');
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -14,11 +13,6 @@ const compression = require('compression');
 const cors = require('cors');
 const bearerToken = require('express-bearer-token');
 require('json.date-extensions');
-
-logger.setup({
-  file: path.resolve('intercambio.log'),
-  level: settings.debug ? 'debug' : 'info',
-});
 
 // Parse string to date when call JSON.parse
 JSON.useDateParser();
@@ -41,11 +35,11 @@ app.use(compression());
 app.use(cors());
 app.use(bearerToken({bodyKey: 'off', queryKey: 'off'}));
 
-logger.info('Using %s environment settings', settings.env);
-logger.info('Debug mode is %s', settings.debug ? 'ON' : 'OFF');
+logger.info(`Using ${settings.env} environment settings`);
+logger.info(`Debug mode is ${settings.debug ? 'ON' : 'OFF'}`);
 
 routes.configure(express, app);
 
 app.listen(app.get('port'), () => {
-  logger.info('Intercambio Backend server is listening on port %s', app.get('port'));
+  logger.info(`Intercambio Backend server is listening on port ${app.get('port')}`);
 });

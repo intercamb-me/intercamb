@@ -3,7 +3,7 @@
 const companyRoutes = require('routes/company');
 const accountRoutes = require('routes/account');
 const clientRoutes = require('routes/client');
-const {logger} = require('@ayro/commons');
+const logger = require('utils/logger');
 
 exports.configure = (express, app) => {
   logger.info('Configuring routes');

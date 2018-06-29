@@ -1,12 +1,12 @@
 'use strict';
 
 const settings = require('configs/settings');
-const {accountAuthenticated, companyMember} = require('routes/middlewares');
+const {accountAuthenticated} = require('routes/middlewares');
 const accountService = require('services/account');
 const companyService = require('services/company');
 const errors = require('utils/errors');
+const logger = require('utils/logger');
 const {Company} = require('models');
-const {logger} = require('@ayro/commons');
 const multer = require('multer');
 
 const upload = multer({dest: settings.uploadsPath});

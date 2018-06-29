@@ -4,7 +4,7 @@ const accountService = require('services/account');
 const clientService = require('services/client');
 const session = require('database/session');
 const errors = require('utils/errors');
-const {logger} = require('@ayro/commons');
+const logger = require('utils/logger');
 
 exports.decodeToken = async (req) => {
   if (req.token) {
@@ -12,7 +12,7 @@ exports.decodeToken = async (req) => {
     const decodedToken = await session.decodeToken(req.token);
     if (decodedToken.account) {
       req.account = decodedToken.account;
-      logger.debug('%s %s [Account: %s]', req.method, req.path, req.account.id);
+      logger.debug(`${req.method} ${req.path} [Account: ${req.account.id}]`);
     }
   }
 };

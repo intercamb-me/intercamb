@@ -2,14 +2,13 @@
 
 const settings = require('configs/settings');
 const errors = require('utils/errors');
+const logger = require('utils/logger');
 const {Account} = require('models');
-const {logger} = require('@ayro/commons');
 const redis = require('redis');
 const JwtRedis = require('jsonwebtoken-redis');
 const Promise = require('bluebird');
 
 const SCOPE_ACCOUNT = 'account';
-const SCOPE_USER = 'user';
 
 const redisClient = redis.createClient({
   host: settings.redis.host,

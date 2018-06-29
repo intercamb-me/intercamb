@@ -2,13 +2,11 @@
 
 const settings = require('configs/settings');
 const constants = require('utils/constants');
-const axios = require('axios');
 const Promise = require('bluebird');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
-const uuid = require('uuid').v4;
 const AWS = require('aws-sdk');
 
 Promise.promisifyAll(mkdirp);
@@ -22,11 +20,6 @@ const s3 = new AWS.S3();
 
 async function isImage(file) {
   return file.mimeType.startsWith('image');
-}
-
-async function downloadImage(url, outputFile) {
-  const response = await axios.get(url, {responseType: 'arraybuffer'});
-  await fs.writeFileAsync(outputFile, response.data);
 }
 
 async function processImage(inputFile, outputFile, options) {
