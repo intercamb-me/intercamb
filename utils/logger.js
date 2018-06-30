@@ -6,10 +6,28 @@ const winston = require('winston');
 
 const level = settings.debug ? 'debug' : 'info';
 const printFormat = winston.format.printf(info => `${info.timestamp} - ${info.level}: ${info.message}`);
+const enumerateErrorFormat = winston.format(info => {
+  if (info.message instanceof Error) {
+    info.message = Object.assign({
+      message: info.message.message,
+      stack: info.message.stack,
+    }, info.message);
+  }
+  if (info instanceof Error) {
+    return Object.assign({
+      message: info.message,
+      stack: info.stack,
+    }, info);
+  }
+  return info;
+});
 
 const consoleLogger = winston.createLogger({
   level,
-  format: winston.format.timestamp(),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    enumerateErrorFormat()
+  ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
@@ -22,7 +40,10 @@ const consoleLogger = winston.createLogger({
 
 const fileLogger = winston.createLogger({
   level,
-  format: winston.format.timestamp(),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    enumerateErrorFormat()
+  ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
