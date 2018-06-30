@@ -12,11 +12,17 @@ const Attachment = new Schema({
   url: {type: String, required: true},
 }, {_id: false});
 
+const Properties = new Schema({
+  schedulable: {type: Boolean},
+  schedule_date: {type: Date},
+}, {_id: false});
+
 const Document = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   client: {type: ObjectId, ref: 'Client', required: true},
   type: {type: String, required: true},
   status: {type: String, required: true},
+  properties: {type: Properties},
   attachments: {type: [Attachment], default: undefined},
   registration_date: {type: Date, required: true},
 });

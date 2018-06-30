@@ -5,7 +5,7 @@ const accountService = require('services/account');
 const clientService = require('services/client');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
-const {Company, Client} = require('models');
+const {Company, Client, Document} = require('models');
 
 async function listClients(req, res) {
   try {
@@ -74,6 +74,17 @@ async function listDocuments(req, res) {
   }
 }
 
+async function updateDocument(req, res) {
+  try {
+    let doc = new Document({id: req.params.document});
+    doc = await clientService.updateDocument(doc, req.body);
+    res.json(doc);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 module.exports = (router, app) => {
   router.get('/', accountAuthenticated, listClients);
   router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
@@ -81,6 +92,7 @@ module.exports = (router, app) => {
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
   router.get('/:client/documents', [accountAuthenticated, clientBelongsToCompany], listDocuments);
+  router.put('/:client/documents/:document', [accountAuthenticated, clientBelongsToCompany], updateDocument);
 
   app.use('/clients', router);
 };
