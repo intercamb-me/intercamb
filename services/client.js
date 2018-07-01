@@ -73,10 +73,10 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const highSchoolHistoric = new Task({
+  const courseEnrolment  = new Task({
     company: company.id,
     client: client.id,
-    type: 'high_school_historic',
+    type: 'course_enrolment',
     status: 'pending',
     properties: {
       schedulable: false,
@@ -123,6 +123,16 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
+  const otherDocuments = new Task({
+    company: company.id,
+    client: client.id,
+    type: 'other_documents',
+    status: 'pending',
+    properties: {
+      schedulable: true,
+    },
+    registration_date: now,
+  });
   await Task.insertMany([
     contract,
     identityCard,
@@ -130,10 +140,12 @@ exports.createClient = async (company, data) => {
     birthCertificate,
     highSchoolCertificate,
     highSchoolHistoric,
+    courseEnrolment,
     nativeCriminalRecords,
     foreignCriminalRecords,
     foreignIdentity,
     reception,
+    otherDocuments,
   ]);
   return client;
 };
