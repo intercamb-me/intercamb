@@ -1,6 +1,6 @@
 'use strict';
 
-const {Client, Document} = require('models');
+const {Client, Task} = require('models');
 const errors = require('utils/errors');
 const queryCommon = require('database/queries/common');
 
@@ -10,9 +10,9 @@ function throwClientNotFoundIfNeeded(client, options) {
   }
 }
 
-function throwDocumentNotFoundIfNeeded(client, options) {
-  if (!client && options.require) {
-    throw errors.notFoundError('document_not_found', 'Document not found');
+function throwTaskNotFoundIfNeeded(task, options) {
+  if (!task && options.require) {
+    throw errors.notFoundError('task_not_found', 'Task not found');
   }
 }
 
@@ -38,24 +38,24 @@ exports.findClients = async (query, options) => {
   return promise.exec();
 };
 
-exports.getDocument = async (id, options) => {
-  const promise = Document.findById(id);
+exports.getTask = async (id, options) => {
+  const promise = Task.findById(id);
   queryCommon.fillQuery(promise, options || {});
-  const document = await promise.exec();
-  throwDocumentNotFoundIfNeeded(document, options);
-  return document;
+  const task = await promise.exec();
+  throwTaskNotFoundIfNeeded(task, options);
+  return task;
 };
 
-exports.findDocument = async (query, options) => {
-  const promise = Document.findOne(query);
+exports.findTask = async (query, options) => {
+  const promise = Task.findOne(query);
   queryCommon.fillQuery(promise, options || {});
-  const document = await promise.exec();
-  throwDocumentNotFoundIfNeeded(document, options);
-  return document;
+  const task = await promise.exec();
+  throwTaskNotFoundIfNeeded(task, options);
+  return task;
 };
 
-exports.findDocuments = async (query, options) => {
-  const promise = Document.find(query);
+exports.findTasks = async (query, options) => {
+  const promise = Task.find(query);
   queryCommon.fillQuery(promise, options || {});
   return promise.exec();
 };

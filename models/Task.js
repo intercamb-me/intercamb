@@ -17,7 +17,7 @@ const Properties = new Schema({
   schedule_date: {type: Date},
 }, {_id: false});
 
-const Document = new Schema({
+const Task = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   client: {type: ObjectId, ref: 'Client', required: true},
   type: {type: String, required: true},
@@ -27,4 +27,4 @@ const Document = new Schema({
   registration_date: {type: Date, required: true},
 });
 
-exports.Document = Document;
+exports.Task = Task;

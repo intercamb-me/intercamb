@@ -5,7 +5,7 @@ const accountService = require('services/account');
 const clientService = require('services/client');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
-const {Company, Client, Document} = require('models');
+const {Company, Client, Task} = require('models');
 
 async function listClients(req, res) {
   try {
@@ -63,21 +63,21 @@ async function removeClient(req, res) {
   }
 }
 
-async function listDocuments(req, res) {
+async function listTasks(req, res) {
   try {
     const client = new Company({id: req.params.client});
-    const documents = await clientService.listDocuments(client);
-    res.json(documents);
+    const tasks = await clientService.listTasks(client);
+    res.json(tasks);
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
   }
 }
 
-async function updateDocument(req, res) {
+async function updateTask(req, res) {
   try {
-    let doc = new Document({id: req.params.document});
-    doc = await clientService.updateDocument(doc, req.body);
+    let doc = new Task({id: req.params.task});
+    doc = await clientService.updateTask(doc, req.body);
     res.json(doc);
   } catch (err) {
     logger.error(err);
@@ -91,8 +91,8 @@ module.exports = (router, app) => {
   router.post('/', accountAuthenticated, createClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
-  router.get('/:client/documents', [accountAuthenticated, clientBelongsToCompany], listDocuments);
-  router.put('/:client/documents/:document', [accountAuthenticated, clientBelongsToCompany], updateDocument);
+  router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
+  router.put('/:client/tasks/:task', [accountAuthenticated, clientBelongsToCompany], updateTask);
 
   app.use('/clients', router);
 };

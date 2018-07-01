@@ -44,6 +44,7 @@ const FamilyMemberData = new Schema({
   education_level: {type: String},
   occupation: {type: String},
   employment_situation: {type: String},
+  phone: {type: String},
 }, {_id: false});
 
 const FamilyData = new Schema({
@@ -81,6 +82,7 @@ const IntendedCourse = new Schema({
 const AdditionalInformation = new Schema({
   disabilities: {type: String},
   arrival_date: {type: DateOnly},
+  how_did_you_know_the_company: {type: String},
 }, {_id: false});
 
 const Client = new Schema({

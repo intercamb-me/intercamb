@@ -1,12 +1,12 @@
 'use strict';
 
 const clientQueries = require('database/queries/client');
-const {Client, Document} = require('models');
+const {Client, Task} = require('models');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
-const UNALLOWED_DOCUMENT_ATTRS = ['_id', 'id', 'company', 'client', 'registration_date'];
+const UNALLOWED_TASK_ATTRS = ['_id', 'id', 'company', 'client', 'registration_date'];
 
 exports.listClients = async (company, options) => {
   return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
@@ -23,7 +23,7 @@ exports.createClient = async (company, data) => {
   client.registration_date = now;
   client.photo_url = DEFAULT_PHOTO_URL;
   await client.save();
-  const contract = new Document({
+  const contract = new Task({
     company: company.id,
     client: client.id,
     type: 'contract',
@@ -33,7 +33,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const identityCard = new Document({
+  const identityCard = new Task({
     company: company.id,
     client: client.id,
     type: 'identity',
@@ -43,7 +43,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const passport = new Document({
+  const passport = new Task({
     company: company.id,
     client: client.id,
     type: 'passport',
@@ -53,7 +53,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const birthCertificate = new Document({
+  const birthCertificate = new Task({
     company: company.id,
     client: client.id,
     type: 'birth_certificate',
@@ -63,7 +63,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const highSchoolCertificate = new Document({
+  const highSchoolCertificate = new Task({
     company: company.id,
     client: client.id,
     type: 'high_school_certificate',
@@ -73,7 +73,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const highSchoolHistoric = new Document({
+  const highSchoolHistoric = new Task({
     company: company.id,
     client: client.id,
     type: 'high_school_historic',
@@ -83,7 +83,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const nativeCriminalRecords = new Document({
+  const nativeCriminalRecords = new Task({
     company: company.id,
     client: client.id,
     type: 'native_criminal_records',
@@ -93,7 +93,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const foreignCriminalRecords = new Document({
+  const foreignCriminalRecords = new Task({
     company: company.id,
     client: client.id,
     type: 'foreign_criminal_records',
@@ -103,7 +103,7 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  const foreignIdentity = new Document({
+  const foreignIdentity = new Task({
     company: company.id,
     client: client.id,
     type: 'foreign_identity',
@@ -113,7 +113,17 @@ exports.createClient = async (company, data) => {
     },
     registration_date: now,
   });
-  await Document.insertMany([
+  const reception = new Task({
+    company: company.id,
+    client: client.id,
+    type: 'reception',
+    status: 'pending',
+    properties: {
+      schedulable: true,
+    },
+    registration_date: now,
+  });
+  await Task.insertMany([
     contract,
     identityCard,
     passport,
@@ -123,6 +133,7 @@ exports.createClient = async (company, data) => {
     nativeCriminalRecords,
     foreignCriminalRecords,
     foreignIdentity,
+    reception,
   ]);
   return client;
 };
@@ -139,18 +150,18 @@ exports.removeClient = async () => {
 
 };
 
-exports.listDocuments = async (client, options) => {
-  return clientQueries.findDocuments({client: client.id}, options);
+exports.listTasks = async (client, options) => {
+  return clientQueries.findTasks({client: client.id}, options);
 };
 
-exports.getDocument = async (id, options) => {
-  return clientQueries.getDocument(id, options);
+exports.getTask = async (id, options) => {
+  return clientQueries.getTask(id, options);
 };
 
-exports.updateDocument = async (document, data) => {
-  const attrs = _.omit(data, UNALLOWED_DOCUMENT_ATTRS);
-  const loadedDocument = await this.getDocument(document.id);
-  await loadedDocument.update(attrs, {runValidators: true});
-  loadedDocument.set(attrs);
-  return loadedDocument;
+exports.updateTask = async (task, data) => {
+  const attrs = _.omit(data, UNALLOWED_TASK_ATTRS);
+  const loadedTask = await this.getTask(task.id);
+  await loadedTask.update(attrs, {runValidators: true});
+  loadedTask.set(attrs);
+  return loadedTask;
 };
