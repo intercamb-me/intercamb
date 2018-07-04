@@ -1,5 +1,6 @@
 'use strict';
 
+const accountQueries = require('database/queries/account');
 const companyQueries = require('database/queries/company');
 const {Company} = require('models');
 
@@ -27,4 +28,8 @@ exports.updateCompany = async () => {
 
 exports.updateCompanyLogo = async () => {
 
+};
+
+exports.listCompanyAccounts = async (company) => {
+  return accountQueries.findAccounts({company: company.id});
 };

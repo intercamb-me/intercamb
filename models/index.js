@@ -3,7 +3,7 @@
 const settings = require('configs/settings');
 const logger = require('utils/logger');
 const {Client} = require('models/Client');
-const {Task} = require('models/Task');
+const {Task, TaskComment} = require('models/Task');
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
 
@@ -73,3 +73,4 @@ exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) =
 exports.Company = mongoose.model('Company', normalizeSchema(Company));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));
+exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));

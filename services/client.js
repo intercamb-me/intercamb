@@ -1,139 +1,113 @@
 'use strict';
 
+const companyQueries = require('database/queries/company');
 const clientQueries = require('database/queries/client');
-const {Client, Task} = require('models');
+const {Client, Task, TaskComment} = require('models');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
-const UNALLOWED_TASK_ATTRS = ['_id', 'id', 'company', 'client', 'registration_date'];
+const UNALLOWED_TASK_ATTRS = ['_id', 'id', 'company', 'client', 'attachments', 'comments', 'registration_date'];
 
-exports.listClients = async (company, options) => {
-  return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
-};
-
-exports.getClient = async (id, options) => {
-  return clientQueries.getClient(id, options);
-};
-
-exports.createClient = async (company, data) => {
+async function saveDefaultTasks(company, client) {
   const now = new Date();
-  const client = new Client(data);
-  client.company = company.id;
-  client.registration_date = now;
-  client.photo_url = DEFAULT_PHOTO_URL;
-  await client.save();
   const contract = new Task({
     company: company.id,
     client: client.id,
-    type: 'contract',
+    name: 'Contrato',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
     registration_date: now,
   });
   const identityCard = new Task({
     company: company.id,
     client: client.id,
-    type: 'identity',
+    name: 'Identidade',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
     registration_date: now,
   });
   const passport = new Task({
     company: company.id,
     client: client.id,
-    type: 'passport',
+    name: 'Passaporte',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
     registration_date: now,
   });
   const birthCertificate = new Task({
     company: company.id,
     client: client.id,
-    type: 'birth_certificate',
+    name: 'Certidão de nascimento',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
     registration_date: now,
   });
   const highSchoolCertificate = new Task({
     company: company.id,
     client: client.id,
-    type: 'high_school_certificate',
+    name: 'Certificado de ensino médio',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
     registration_date: now,
   });
-  const courseEnrolment  = new Task({
+  const highSchoolHistoric = new Task({
     company: company.id,
     client: client.id,
-    type: 'course_enrolment',
+    name: 'Histórico do ensino médio',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
+    registration_date: now,
+  });
+  const courseEnrolment = new Task({
+    company: company.id,
+    client: client.id,
+    name: 'Inscrição no curso',
+    status: 'pending',
+    schedulable: false,
     registration_date: now,
   });
   const nativeCriminalRecords = new Task({
     company: company.id,
     client: client.id,
-    type: 'native_criminal_records',
+    name: 'Antecedentes criminais (Brasil)',
     status: 'pending',
-    properties: {
-      schedulable: false,
-    },
+    schedulable: false,
     registration_date: now,
   });
   const foreignCriminalRecords = new Task({
     company: company.id,
     client: client.id,
-    type: 'foreign_criminal_records',
+    name: 'Antecedentes criminais (Argentina)',
     status: 'pending',
-    properties: {
-      schedulable: true,
-    },
+    schedulable: true,
     registration_date: now,
   });
   const foreignIdentity = new Task({
     company: company.id,
     client: client.id,
-    type: 'foreign_identity',
+    name: 'DNI (Argentina)',
     status: 'pending',
-    properties: {
-      schedulable: true,
-    },
+    schedulable: true,
     registration_date: now,
   });
   const reception = new Task({
     company: company.id,
     client: client.id,
-    type: 'reception',
+    name: 'Recepção',
     status: 'pending',
-    properties: {
-      schedulable: true,
-    },
+    schedulable: true,
     registration_date: now,
   });
   const otherDocuments = new Task({
     company: company.id,
     client: client.id,
-    type: 'other_documents',
+    name: 'Outros documentos',
     status: 'pending',
-    properties: {
-      schedulable: true,
-    },
+    schedulable: false,
     registration_date: now,
   });
-  await Task.insertMany([
+  return Task.insertMany([
     contract,
     identityCard,
     passport,
@@ -147,6 +121,24 @@ exports.createClient = async (company, data) => {
     reception,
     otherDocuments,
   ]);
+}
+
+exports.listClients = async (company, options) => {
+  return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
+};
+
+exports.getClient = async (id, options) => {
+  return clientQueries.getClient(id, options);
+};
+
+exports.createClient = async (company, data) => {
+  await companyQueries.getCompany(company.id, {select: ''});
+  const client = new Client(data);
+  client.company = company.id;
+  client.registration_date = new Date();
+  client.photo_url = DEFAULT_PHOTO_URL;
+  await client.save();
+  await saveDefaultTasks(company, client);
   return client;
 };
 
@@ -176,4 +168,15 @@ exports.updateTask = async (task, data) => {
   await loadedTask.update(attrs, {runValidators: true});
   loadedTask.set(attrs);
   return loadedTask;
+};
+
+exports.addTaskComment = async (account, task, text) => {
+  await clientQueries.getTask(task.id, {select: ''});
+  const comment = new TaskComment({
+    text,
+    account: account.id,
+    registration_date: new Date(),
+  });
+  await Task.update({_id: task.id}, {$push: {comments: comment}});
+  return comment;
 };

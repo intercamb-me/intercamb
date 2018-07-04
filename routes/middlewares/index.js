@@ -33,13 +33,9 @@ exports.accountAuthenticated = async (req, res, next) => {
 
 exports.clientBelongsToCompany = async (req, res, next) => {
   try {
-    if (!req.account) {
-      errors.respondWithError(res, errors.authenticationError('authentication_required', 'Authentication required'));
-      return;
-    }
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const client = await clientService.getClient(req.params.client, {select: 'company'});
-    if (!client || client.company.toString() !== account.company.toString()) {
+    if (client.company.toString() !== account.company.toString()) {
       errors.respondWithError(res, errors.notFoundError('client_not_found', 'Client not found'));
       return;
     }
@@ -49,3 +45,19 @@ exports.clientBelongsToCompany = async (req, res, next) => {
     errors.respondWithError(res, err);
   }
 };
+
+exports.taskBelongsToClient = async (req, res, next) => {
+  try {
+    const client = await clientService.getClient(req.params.client, {select: ''});
+    const task = await clientService.getTask(req.params.task, {select: 'client'});
+    if (client.id !== task.client.toString()) {
+      errors.respondWithError(res, errors.notFoundError('task_not_found', 'Task not found'));
+      return;
+    }
+    next();
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+};
+

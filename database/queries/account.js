@@ -25,3 +25,9 @@ exports.findAccount = async (query, options) => {
   throwAccountNotFoundIfNeeded(account, options);
   return account;
 };
+
+exports.findAccounts = async (query, options) => {
+  const promise = Account.find(query);
+  queryCommon.fillQuery(promise, options || {});
+  return promise.exec();
+};

@@ -1,6 +1,6 @@
 'use strict';
 
-const {accountAuthenticated, clientBelongsToCompany} = require('routes/middlewares');
+const {accountAuthenticated, clientBelongsToCompany, taskBelongsToClient} = require('routes/middlewares');
 const accountService = require('services/account');
 const clientService = require('services/client');
 const errors = require('utils/errors');
@@ -9,7 +9,7 @@ const {Company, Client, Task} = require('models');
 
 async function listClients(req, res) {
   try {
-    const account = await accountService.getAccount(req.account.id);
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = new Company({id: account.company});
     const clients = await clientService.listClients(company);
     res.json(clients);
@@ -31,12 +31,12 @@ async function getClient(req, res) {
 
 async function createClient(req, res) {
   try {
-    const account = await accountService.getAccount(req.account.id);
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = new Company({id: account.company});
     const client = await clientService.createClient(company, req.body);
     res.json(client);
   } catch (err) {
-    logger.log({level: 'error', message: err});
+    logger.error(err);
     errors.respondWithError(res, err);
   }
 }
@@ -74,11 +74,32 @@ async function listTasks(req, res) {
   }
 }
 
+async function getTask(req, res) {
+  try {
+    const task = await clientService.getTask(req.params.task);
+    res.json(task);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 async function updateTask(req, res) {
   try {
-    let doc = new Task({id: req.params.task});
-    doc = await clientService.updateTask(doc, req.body);
-    res.json(doc);
+    let task = new Task({id: req.params.task});
+    task = await clientService.updateTask(task, req.body);
+    res.json(task);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function addTaskComment(req, res) {
+  try {
+    const task = new Task({id: req.params.task});
+    const comment = await clientService.addTaskComment(req.account, task, req.body.text);
+    res.json(comment);
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
@@ -92,7 +113,9 @@ module.exports = (router, app) => {
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
   router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
-  router.put('/:client/tasks/:task', [accountAuthenticated, clientBelongsToCompany], updateTask);
+  router.get('/:client/tasks/:task', [accountAuthenticated, clientBelongsToCompany, taskBelongsToClient], getTask);
+  router.put('/:client/tasks/:task', [accountAuthenticated, clientBelongsToCompany, taskBelongsToClient], updateTask);
+  router.post('/:client/tasks/:task/comments', [accountAuthenticated, clientBelongsToCompany, taskBelongsToClient], addTaskComment);
 
   app.use('/clients', router);
 };
