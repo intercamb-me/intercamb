@@ -3,6 +3,7 @@
 const companyRoutes = require('routes/company');
 const accountRoutes = require('routes/account');
 const clientRoutes = require('routes/client');
+const taskRoutes = require('routes/task');
 const logger = require('utils/logger');
 
 exports.configure = (express, app) => {
@@ -10,4 +11,5 @@ exports.configure = (express, app) => {
   companyRoutes(express.Router({mergeParams: true}), app);
   accountRoutes(express.Router({mergeParams: true}), app);
   clientRoutes(express.Router({mergeParams: true}), app);
+  taskRoutes(express.Router({mergeParams: true}), app);
 };

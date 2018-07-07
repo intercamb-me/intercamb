@@ -3,6 +3,7 @@
 const {Account} = require('models');
 const errors = require('utils/errors');
 const queryCommon = require('database/queries/common');
+const _ = require('lodash');
 
 function throwAccountNotFoundIfNeeded(account, options) {
   if (!account && options.require) {
@@ -11,23 +12,35 @@ function throwAccountNotFoundIfNeeded(account, options) {
 }
 
 exports.getAccount = async (id, options) => {
-  const promise = Account.findById(id);
-  queryCommon.fillQuery(promise, options || {});
-  const account = await promise.exec();
+  const queryBuilder = Account.findById(id);
+  queryCommon.fillQuery(queryBuilder, options || {});
+  const account = await queryBuilder.exec();
   throwAccountNotFoundIfNeeded(account, options);
   return account;
 };
 
 exports.findAccount = async (query, options) => {
-  const promise = Account.findOne(query);
-  queryCommon.fillQuery(promise, options || {});
-  const account = await promise.exec();
+  let queryBuilder;
+  if (_.isFunction(query)) {
+    queryBuilder = Account.findOne();
+    query(queryBuilder);
+  } else {
+    queryBuilder = Account.findOne(query);
+  }
+  queryCommon.fillQuery(queryBuilder, options || {});
+  const account = await queryBuilder.exec();
   throwAccountNotFoundIfNeeded(account, options);
   return account;
 };
 
 exports.findAccounts = async (query, options) => {
-  const promise = Account.find(query);
-  queryCommon.fillQuery(promise, options || {});
-  return promise.exec();
+  let queryBuilder;
+  if (_.isFunction(query)) {
+    queryBuilder = Account.find();
+    query(queryBuilder);
+  } else {
+    queryBuilder = Account.find(query);
+  }
+  queryCommon.fillQuery(queryBuilder, options || {});
+  return queryBuilder.exec();
 };

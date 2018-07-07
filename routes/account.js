@@ -12,7 +12,7 @@ const upload = multer({dest: settings.uploadsPath});
 
 async function createAccount(req, res) {
   try {
-    const account = await accountService.createAccount(req.body.name, req.body.email, req.body.password);
+    const account = await accountService.createAccount(req.body.first_name, req.body.last_name, req.body.email, req.body.password);
     res.json(account);
   } catch (err) {
     logger.error(err);
@@ -20,7 +20,7 @@ async function createAccount(req, res) {
   }
 }
 
-async function getCurrentAccount(req, res) {
+async function getAccount(req, res) {
   try {
     await decodeToken(req);
     if (req.account) {
@@ -39,7 +39,7 @@ async function getCurrentAccount(req, res) {
   }
 }
 
-async function updateCurrentAccount(req, res) {
+async function updateAccount(req, res) {
   try {
     const account = await accountService.updateAccount(req.account, req.body);
     res.json(account);
@@ -49,7 +49,7 @@ async function updateCurrentAccount(req, res) {
   }
 }
 
-async function updateCurrentAccountIcon(req, res) {
+async function updateAccountIcon(req, res) {
   try {
     const account = await accountService.updateIcon(req.account, req.file);
     res.json(account);
@@ -84,9 +84,9 @@ async function logout(req, res) {
 
 module.exports = (router, app) => {
   router.post('', createAccount);
-  router.get('/current', getCurrentAccount);
-  router.put('/current', accountAuthenticated, updateCurrentAccount);
-  router.put('/current/icon', [accountAuthenticated, upload.single('icon')], updateCurrentAccountIcon);
+  router.get('/current', getAccount);
+  router.put('/current', accountAuthenticated, updateAccount);
+  router.put('/current/icon', [accountAuthenticated, upload.single('icon')], updateAccountIcon);
   router.post('/login', login);
   router.post('/logout', logout);
 

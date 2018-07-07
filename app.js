@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(compression());
 app.use(cors());
-app.use(bearerToken({bodyKey: 'off', queryKey: 'off'}));
+app.use(bearerToken());
 
 logger.info(`Using ${settings.env} environment settings`);
 logger.info(`Debug mode is ${settings.debug ? 'ON' : 'OFF'}`);

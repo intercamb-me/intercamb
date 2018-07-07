@@ -20,7 +20,7 @@ async function createCompany(req, res) {
   }
 }
 
-async function getCurrentCompany(req, res) {
+async function getCompany(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company);
@@ -31,7 +31,7 @@ async function getCurrentCompany(req, res) {
   }
 }
 
-async function updateCurrentCompany(req, res) {
+async function updateCompany(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     let company = await companyService.getCompany(account.company, {select: ''});
@@ -43,7 +43,7 @@ async function updateCurrentCompany(req, res) {
   }
 }
 
-async function updateCurrentCompanyLogo(req, res) {
+async function updateCompanyLogo(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     let company = await companyService.getCompany(account.company, {select: ''});
@@ -55,12 +55,36 @@ async function updateCurrentCompanyLogo(req, res) {
   }
 }
 
-async function listCurrentCompanyAccounts(req, res) {
+async function listAccounts(req, res) {
   try {
-    const account = await accountService.getAccount(req.account.id, {select: ''});
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: ''});
-    const accounts = await companyService.listCompanyAccounts(company);
+    const accounts = await companyService.listAccounts(company);
     res.json(accounts);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listClients(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = await companyService.getCompany(account.company, {select: ''});
+    const clients = await companyService.listClients(company);
+    res.json(clients);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listScheduledTasks(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = await companyService.getCompany(account.company, {select: ''});
+    const tasks = await companyService.listScheduledTasks(company);
+    res.json(tasks);
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
@@ -69,10 +93,12 @@ async function listCurrentCompanyAccounts(req, res) {
 
 module.exports = (router, app) => {
   router.post('', accountAuthenticated, createCompany);
-  router.get('/current', accountAuthenticated, getCurrentCompany);
-  router.put('/current', accountAuthenticated, updateCurrentCompany);
-  router.put('/current/logo', [accountAuthenticated, upload.single('logo')], updateCurrentCompanyLogo);
-  router.get('/current/accounts', accountAuthenticated, listCurrentCompanyAccounts);
+  router.get('/current', accountAuthenticated, getCompany);
+  router.put('/current', accountAuthenticated, updateCompany);
+  router.put('/current/logo', [accountAuthenticated, upload.single('logo')], updateCompanyLogo);
+  router.get('/current/accounts', accountAuthenticated, listAccounts);
+  router.get('/current/clients', accountAuthenticated, listClients);
+  router.get('/current/tasks/scheduled', accountAuthenticated, listScheduledTasks);
 
   app.use('/companies', router);
 };

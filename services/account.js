@@ -11,11 +11,12 @@ exports.getAccount = async (id) => {
   return accountQueries.getAccount(id);
 };
 
-exports.createAccount = async (name, email, password) => {
+exports.createAccount = async (firstName, lastName, email, password) => {
   const hash = await crypt.hash(password);
   const account = new Account({
-    name,
     email,
+    first_name: firstName,
+    last_name: lastName,
     password: hash,
     icon_url: DEFAULT_ICON_URL,
     registration_date: new Date(),

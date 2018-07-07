@@ -2,12 +2,12 @@
 
 const companyQueries = require('database/queries/company');
 const clientQueries = require('database/queries/client');
-const {Client, Task, TaskComment} = require('models');
+const taskQueries = require('database/queries/task');
+const {Client, Task} = require('models');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
-const UNALLOWED_TASK_ATTRS = ['_id', 'id', 'company', 'client', 'attachments', 'comments', 'registration_date'];
 
 async function saveDefaultTasks(company, client) {
   const now = new Date();
@@ -123,10 +123,6 @@ async function saveDefaultTasks(company, client) {
   ]);
 }
 
-exports.listClients = async (company, options) => {
-  return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
-};
-
 exports.getClient = async (id, options) => {
   return clientQueries.getClient(id, options);
 };
@@ -155,28 +151,5 @@ exports.removeClient = async () => {
 };
 
 exports.listTasks = async (client, options) => {
-  return clientQueries.findTasks({client: client.id}, options);
-};
-
-exports.getTask = async (id, options) => {
-  return clientQueries.getTask(id, options);
-};
-
-exports.updateTask = async (task, data) => {
-  const attrs = _.omit(data, UNALLOWED_TASK_ATTRS);
-  const loadedTask = await this.getTask(task.id);
-  await loadedTask.update(attrs, {runValidators: true});
-  loadedTask.set(attrs);
-  return loadedTask;
-};
-
-exports.addTaskComment = async (account, task, text) => {
-  await clientQueries.getTask(task.id, {select: ''});
-  const comment = new TaskComment({
-    text,
-    account: account.id,
-    registration_date: new Date(),
-  });
-  await Task.update({_id: task.id}, {$push: {comments: comment}});
-  return comment;
+  return taskQueries.findTasks({client: client.id}, options);
 };

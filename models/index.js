@@ -3,7 +3,7 @@
 const settings = require('configs/settings');
 const logger = require('utils/logger');
 const {Client} = require('models/Client');
-const {Task, TaskComment} = require('models/Task');
+const {Task, TaskComment, TaskAttachment} = require('models/Task');
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
 
@@ -53,7 +53,8 @@ function normalizeSchema(schema, customTransform) {
 
 const Account = new Schema({
   company: {type: ObjectId, ref: 'Company'},
-  name: {type: String, required: true},
+  first_name: {type: String, required: true},
+  last_name: {type: String, required: true},
   email: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   icon_url: {type: String},
@@ -74,3 +75,6 @@ exports.Company = mongoose.model('Company', normalizeSchema(Company));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));
 exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));
+exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment, (attachment) => {
+  delete attachment.url;
+}));

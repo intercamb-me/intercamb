@@ -79,7 +79,8 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
     png: true,
     dimension: COMPANY_LOGO_DIMENSION,
   };
-  return uploadMedia(logoPath, file, options);
+  await uploadMedia(logoPath, file, options);
+  return file.name;
 };
 
 exports.uploadAccountIcon = async (account, iconPath) => {
@@ -92,7 +93,8 @@ exports.uploadAccountIcon = async (account, iconPath) => {
     png: true,
     dimension: ACCOUNT_ICON_DIMENSION,
   };
-  return uploadMedia(iconPath, file, options);
+  await uploadMedia(iconPath, file, options);
+  return file.name;
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {
@@ -105,14 +107,27 @@ exports.uploadClientPhoto = async (client, photoPath) => {
     png: true,
     dimension: CLIENT_PHOTO_DIMENSION,
   };
-  return uploadMedia(photoPath, file, options);
+  await uploadMedia(photoPath, file, options);
+  return file.name;
 };
 
-exports.uploadClientFile = async (client, clientFile) => {
+exports.uploadTaskAttachment = async (task, taskFile) => {
   const file = {
-    name: `upload_${Date.now()}${path.extname(clientFile.name)}`,
-    relativeDir: path.join('clients', client.id, 'uploads'),
-    mimeType: clientFile.mimeType,
+    name: `attachment_${Date.now()}${path.extname(taskFile.name)}`,
+    relativeDir: path.join('clients', task.client.toString(), 'tasks', task.id),
+    mimeType: taskFile.mimeType,
   };
-  return uploadMedia(clientFile.path, file);
+  await uploadMedia(taskFile.path, file);
+  return file.name;
+};
+
+exports.getTaskAttachment = async (task, attachment) => {
+  const relativePath = path.join('clients', task.client.toString(), 'tasks', task.id, attachment.file);
+  if (settings.env === constants.environments.PRODUCTION) {
+    return s3.getObject({
+      Bucket: settings.mediaS3Bucket,
+      Key: relativePath,
+    }).promise();
+  }
+  return fs.readFileAsync(path.join(settings.mediaPath, relativePath));
 };

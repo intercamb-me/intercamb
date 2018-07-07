@@ -12,6 +12,9 @@ exports.fillQuery = (promise, options) => {
   if (options.select) {
     promise.select(options.select);
   }
+  if (options.sort) {
+    promise.sort(options.sort);
+  }
   if (options.lean) {
     promise.lean();
   }

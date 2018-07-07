@@ -1,8 +1,9 @@
 'use strict';
 
-const {Client, Task} = require('models');
+const {Client} = require('models');
 const errors = require('utils/errors');
 const queryCommon = require('database/queries/common');
+const _ = require('lodash');
 
 function throwClientNotFoundIfNeeded(client, options) {
   if (!client && options.require) {
@@ -10,53 +11,36 @@ function throwClientNotFoundIfNeeded(client, options) {
   }
 }
 
-function throwTaskNotFoundIfNeeded(task, options) {
-  if (!task && options.require) {
-    throw errors.notFoundError('task_not_found', 'Task not found');
-  }
-}
-
 exports.getClient = async (id, options) => {
-  const promise = Client.findById(id);
-  queryCommon.fillQuery(promise, options || {});
-  const client = await promise.exec();
+  const queryBuilder = Client.findById(id);
+  queryCommon.fillQuery(queryBuilder, options || {});
+  const client = await queryBuilder.exec();
   throwClientNotFoundIfNeeded(client, options);
   return client;
 };
 
 exports.findClient = async (query, options) => {
-  const promise = Client.findOne(query);
-  queryCommon.fillQuery(promise, options || {});
-  const client = await promise.exec();
+  let queryBuilder;
+  if (_.isFunction(query)) {
+    queryBuilder = Client.findOne();
+    query(queryBuilder);
+  } else {
+    queryBuilder = Client.findOne(query);
+  }
+  queryCommon.fillQuery(queryBuilder, options || {});
+  const client = await queryBuilder.exec();
   throwClientNotFoundIfNeeded(client, options);
   return client;
 };
 
 exports.findClients = async (query, options) => {
-  const promise = Client.find(query);
-  queryCommon.fillQuery(promise, options || {});
-  return promise.exec();
+  let queryBuilder;
+  if (_.isFunction(query)) {
+    queryBuilder = Client.find();
+    query(queryBuilder);
+  } else {
+    queryBuilder = Client.find(query);
+  }
+  queryCommon.fillQuery(queryBuilder, options || {});
+  return queryBuilder.exec();
 };
-
-exports.getTask = async (id, options) => {
-  const promise = Task.findById(id);
-  queryCommon.fillQuery(promise, options || {});
-  const task = await promise.exec();
-  throwTaskNotFoundIfNeeded(task, options);
-  return task;
-};
-
-exports.findTask = async (query, options) => {
-  const promise = Task.findOne(query);
-  queryCommon.fillQuery(promise, options || {});
-  const task = await promise.exec();
-  throwTaskNotFoundIfNeeded(task, options);
-  return task;
-};
-
-exports.findTasks = async (query, options) => {
-  const promise = Task.find(query);
-  queryCommon.fillQuery(promise, options || {});
-  return promise.exec();
-};
-

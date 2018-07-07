@@ -2,6 +2,7 @@
 
 const accountService = require('services/account');
 const clientService = require('services/client');
+const taskService = require('services/task');
 const session = require('database/session');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
@@ -46,11 +47,11 @@ exports.clientBelongsToCompany = async (req, res, next) => {
   }
 };
 
-exports.taskBelongsToClient = async (req, res, next) => {
+exports.taskBelongsToCompany = async (req, res, next) => {
   try {
-    const client = await clientService.getClient(req.params.client, {select: ''});
-    const task = await clientService.getTask(req.params.task, {select: 'client'});
-    if (client.id !== task.client.toString()) {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const task = await taskService.getTask(req.params.task, {select: 'company'});
+    if (task.company.toString() !== account.company.toString()) {
       errors.respondWithError(res, errors.notFoundError('task_not_found', 'Task not found'));
       return;
     }
@@ -60,4 +61,3 @@ exports.taskBelongsToClient = async (req, res, next) => {
     errors.respondWithError(res, err);
   }
 };
-

@@ -6,10 +6,12 @@ const {Schema} = mongoose;
 const {ObjectId} = Schema.Types;
 
 const TaskAttachment = new Schema({
+  account: {type: ObjectId, ref: 'Account', required: true},
   name: {type: String, required: true},
   type: {type: String, required: true},
   size: {type: Number, required: true},
-  url: {type: String, required: true},
+  file: {type: String, required: true},
+  registration_date: {type: Date, required: true},
 });
 
 const TaskComment = new Schema({
@@ -29,10 +31,11 @@ const Task = new Schema({
   status: {type: String, required: true},
   schedulable: {type: Boolean, required: true},
   properties: {type: TaskProperties},
-  attachments: {type: [TaskAttachment], default: undefined},
   comments: {type: [TaskComment], default: undefined},
+  attachments: {type: [TaskAttachment], default: undefined},
   registration_date: {type: Date, required: true},
 });
 
 exports.Task = Task;
 exports.TaskComment = TaskComment;
+exports.TaskAttachment = TaskAttachment;
