@@ -37,18 +37,20 @@ exports.listAccounts = async (company, options) => {
   return accountQueries.findAccounts({company: company.id}, options);
 };
 
-exports.listClients = async (company, options) => {
-  return clientQueries.findClients({company: company.id}, options || {select: 'forename surname email phone photo_url'});
+exports.listClients = async (company, ids, options) => {
+  return clientQueries.findClients((query) => {
+    query.where('company').equals(company.id);
+    if (ids) {
+      query.where('_id').in(ids);
+    }
+  }, options || {select: 'forename surname email phone photo_url'});
 };
 
-exports.listScheduledTasks = async (company) => {
-  let pastWeek = dateFns.addWeeks(new Date(), -1);
-  pastWeek = dateFns.startOfWeek(pastWeek);
-  let nextWeek = dateFns.addWeeks(new Date(), 1);
-  nextWeek = dateFns.lastDayOfWeek(nextWeek);
+exports.listScheduledTasks = async (company, startDate, endDate) => {
   return taskQueries.findTasks((query) => {
     query.where('company').equals(company.id);
-    query.where('properties.schedule_date').gte(pastWeek).lte(nextWeek);
-    query.sort('properties.schedule_date');
+    query.where('status').equals('pending');
+    query.where('schedule_date').gte(startDate).lte(endDate);
+    query.sort('schedule_date');
   });
 };

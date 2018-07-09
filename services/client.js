@@ -70,7 +70,7 @@ async function saveDefaultTasks(company, client) {
   const nativeCriminalRecords = new Task({
     company: company.id,
     client: client.id,
-    name: 'Antecedentes criminais (Brasil)',
+    name: 'Antecedentes criminais',
     status: 'pending',
     schedulable: false,
     registration_date: now,
@@ -86,7 +86,7 @@ async function saveDefaultTasks(company, client) {
   const foreignIdentity = new Task({
     company: company.id,
     client: client.id,
-    name: 'DNI (Argentina)',
+    name: 'Identidade (Argentina)',
     status: 'pending',
     schedulable: true,
     registration_date: now,

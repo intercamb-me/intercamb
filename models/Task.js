@@ -20,17 +20,12 @@ const TaskComment = new Schema({
   registration_date: {type: Date, required: true},
 });
 
-const TaskProperties = new Schema({
-  schedule_date: {type: Date},
-}, {_id: false});
-
 const Task = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   client: {type: ObjectId, ref: 'Client', required: true},
   name: {type: String, required: true},
   status: {type: String, required: true},
-  schedulable: {type: Boolean, required: true},
-  properties: {type: TaskProperties},
+  schedule_date: {type: Date},
   comments: {type: [TaskComment], default: undefined},
   attachments: {type: [TaskAttachment], default: undefined},
   registration_date: {type: Date, required: true},

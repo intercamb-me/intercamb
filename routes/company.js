@@ -71,7 +71,7 @@ async function listClients(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: ''});
-    const clients = await companyService.listClients(company);
+    const clients = await companyService.listClients(company, req.query.id);
     res.json(clients);
   } catch (err) {
     logger.error(err);
@@ -83,7 +83,7 @@ async function listScheduledTasks(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: ''});
-    const tasks = await companyService.listScheduledTasks(company);
+    const tasks = await companyService.listScheduledTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)));
     res.json(tasks);
   } catch (err) {
     logger.error(err);
