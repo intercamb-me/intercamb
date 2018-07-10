@@ -5,7 +5,6 @@ const companyQueries = require('database/queries/company');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
 const {Company} = require('models');
-const dateFns = require('date-fns');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 

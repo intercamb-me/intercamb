@@ -74,7 +74,6 @@ const Token = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   identifier: {type: String, required: true},
   type: {type: String, required: true},
-  code: {type: String, required: true},
   expiration_date: {type: Date, required: true},
   registration_date: {type: Date, required: true},
 });

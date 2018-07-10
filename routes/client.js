@@ -3,6 +3,7 @@
 const {accountAuthenticated, clientBelongsToCompany} = require('routes/middlewares');
 const accountService = require('services/account');
 const clientService = require('services/client');
+const tokenService = require('services/token');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
 const {Company, Client} = require('models');
@@ -19,9 +20,22 @@ async function getClient(req, res) {
 
 async function createClient(req, res) {
   try {
-    const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = new Company({id: account.company});
-    const client = await clientService.createClient(company, req.body);
+    let token;
+    let client;
+    if (req.query.token) {
+      const data = req.body;
+      data.needs_revision = true;
+      token = await tokenService.getToken(req.query.token);
+      client = await clientService.createClient(token.company, data);
+    } else {
+      await accountAuthenticated(req, res, () => {});
+      const account = await accountService.getAccount(req.account.id, {select: 'company'});
+      const company = new Company({id: account.company});
+      client = await clientService.createClient(company, req.body);
+    }
+    if (token) {
+      await tokenService.removeToken(token);
+    }
     res.json(client);
   } catch (err) {
     logger.error(err);
@@ -64,7 +78,7 @@ async function listTasks(req, res) {
 
 module.exports = (router, app) => {
   router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
-  router.post('/', accountAuthenticated, createClient);
+  router.post('/', createClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
   router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);

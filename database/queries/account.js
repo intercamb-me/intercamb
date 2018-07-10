@@ -15,7 +15,7 @@ exports.getAccount = async (id, options) => {
   const queryBuilder = Account.findById(id);
   queryCommon.fillQuery(queryBuilder, options || {});
   const account = await queryBuilder.exec();
-  throwAccountNotFoundIfNeeded(account, options);
+  throwAccountNotFoundIfNeeded(account, options || {});
   return account;
 };
 
@@ -29,7 +29,7 @@ exports.findAccount = async (query, options) => {
   }
   queryCommon.fillQuery(queryBuilder, options || {});
   const account = await queryBuilder.exec();
-  throwAccountNotFoundIfNeeded(account, options);
+  throwAccountNotFoundIfNeeded(account, options || {});
   return account;
 };
 

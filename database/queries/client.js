@@ -15,7 +15,7 @@ exports.getClient = async (id, options) => {
   const queryBuilder = Client.findById(id);
   queryCommon.fillQuery(queryBuilder, options || {});
   const client = await queryBuilder.exec();
-  throwClientNotFoundIfNeeded(client, options);
+  throwClientNotFoundIfNeeded(client, options || {});
   return client;
 };
 
@@ -29,7 +29,7 @@ exports.findClient = async (query, options) => {
   }
   queryCommon.fillQuery(queryBuilder, options || {});
   const client = await queryBuilder.exec();
-  throwClientNotFoundIfNeeded(client, options);
+  throwClientNotFoundIfNeeded(client, options || {});
   return client;
 };
 

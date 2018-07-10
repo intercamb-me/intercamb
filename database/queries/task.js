@@ -15,7 +15,7 @@ exports.getTask = async (id, options) => {
   const queryBuilder = Task.findById(id);
   queryCommon.fillQuery(queryBuilder, options || {});
   const task = await queryBuilder.exec();
-  throwTaskNotFoundIfNeeded(task, options);
+  throwTaskNotFoundIfNeeded(task, options || {});
   return task;
 };
 
@@ -29,7 +29,7 @@ exports.findTask = async (query, options) => {
   }
   queryCommon.fillQuery(queryBuilder, options || {});
   const task = await queryBuilder.exec();
-  throwTaskNotFoundIfNeeded(task, options);
+  throwTaskNotFoundIfNeeded(task, options || {});
   return task;
 };
 

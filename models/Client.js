@@ -92,6 +92,7 @@ const Client = new Schema({
   email: {type: String},
   phone: {type: String},
   photo_url: {type: String},
+  needs_revision: {type: Boolean},
   registration_date: {type: Date, required: true},
   address: {type: Address},
   personal_data: {type: PersonalData},

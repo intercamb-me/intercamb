@@ -15,7 +15,7 @@ exports.getCompany = async (id, options) => {
   const queryBuilder = Company.findById(id);
   queryCommon.fillQuery(queryBuilder, options || {});
   const company = await queryBuilder.exec();
-  throwCompanyNotFoundIfNeeded(company, options);
+  throwCompanyNotFoundIfNeeded(company, options || {});
   return company;
 };
 
@@ -29,6 +29,6 @@ exports.findCompany = async (query, options) => {
   }
   queryCommon.fillQuery(queryBuilder, options || {});
   const company = await queryBuilder.exec();
-  throwCompanyNotFoundIfNeeded(company, options);
+  throwCompanyNotFoundIfNeeded(company, options || {});
   return company;
 };

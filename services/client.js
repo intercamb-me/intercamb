@@ -1,11 +1,8 @@
 'use strict';
 
-const companyQueries = require('database/queries/company');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
-const cryptography = require('utils/cryptography');
 const {Client, Task} = require('models');
-const dateFns = require('date-fns');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
