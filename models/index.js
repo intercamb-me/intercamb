@@ -69,6 +69,16 @@ const Company = new Schema({
   registration_date: {type: Date, required: true},
 });
 
+const Token = new Schema({
+  creator: {type: ObjectId, ref: 'Account', required: true},
+  company: {type: ObjectId, ref: 'Company', required: true},
+  identifier: {type: String, required: true},
+  type: {type: String, required: true},
+  code: {type: String, required: true},
+  expiration_date: {type: Date, required: true},
+  registration_date: {type: Date, required: true},
+});
+
 exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) => {
   delete account.password;
 }));
@@ -76,6 +86,5 @@ exports.Company = mongoose.model('Company', normalizeSchema(Company));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));
 exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));
-exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment, (attachment) => {
-  delete attachment.url;
-}));
+exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment));
+exports.Token = mongoose.model('Token', normalizeSchema(Token));

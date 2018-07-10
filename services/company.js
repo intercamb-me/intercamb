@@ -52,5 +52,6 @@ exports.listScheduledTasks = async (company, startDate, endDate) => {
     query.where('status').equals('pending');
     query.where('schedule_date').gte(startDate).lte(endDate);
     query.sort('schedule_date');
+    query.sort('name');
   });
 };

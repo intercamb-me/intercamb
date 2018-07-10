@@ -3,13 +3,15 @@
 const companyQueries = require('database/queries/company');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
+const cryptography = require('utils/cryptography');
 const {Client, Task} = require('models');
+const dateFns = require('date-fns');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
 
-async function saveDefaultTasks(company, client) {
+async function createTasks(company, client) {
   const now = new Date();
   const contract = new Task({
     company: company.id,
@@ -128,13 +130,12 @@ exports.getClient = async (id, options) => {
 };
 
 exports.createClient = async (company, data) => {
-  await companyQueries.getCompany(company.id, {select: ''});
   const client = new Client(data);
   client.company = company.id;
   client.registration_date = new Date();
   client.photo_url = DEFAULT_PHOTO_URL;
   await client.save();
-  await saveDefaultTasks(company, client);
+  await createTasks(company, client);
   return client;
 };
 
