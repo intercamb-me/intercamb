@@ -36,14 +36,11 @@ const PersonalData = new Schema({
   birthdate: {type: DateOnly},
   gender: {type: String},
   marital_status: {type: String},
-  number_of_children: {type: Number},
 }, {_id: false});
 
 const FamilyMemberData = new Schema({
   name: {type: String},
-  education_level: {type: String},
-  occupation: {type: String},
-  employment_situation: {type: String},
+  email: {type: String},
   phone: {type: String},
 }, {_id: false});
 
@@ -89,8 +86,8 @@ const Client = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   forename: {type: String, required: true},
   surname: {type: String, required: true},
-  email: {type: String},
-  phone: {type: String},
+  email: {type: String, required: true},
+  phone: {type: String, required: true},
   photo_url: {type: String},
   needs_revision: {type: Boolean},
   registration_date: {type: Date, required: true},
