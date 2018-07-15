@@ -8,16 +8,6 @@ const errors = require('utils/errors');
 const logger = require('utils/logger');
 const {Company, Client} = require('models');
 
-async function getClient(req, res) {
-  try {
-    const client = await clientService.getClient(req.params.client);
-    res.json(client);
-  } catch (err) {
-    logger.error(err);
-    errors.respondWithError(res, err);
-  }
-}
-
 async function createClient(req, res) {
   try {
     let token;
@@ -36,6 +26,16 @@ async function createClient(req, res) {
     if (token) {
       await tokenService.removeToken(token);
     }
+    res.json(client);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function getClient(req, res) {
+  try {
+    const client = await clientService.getClient(req.params.client);
     res.json(client);
   } catch (err) {
     logger.error(err);
@@ -76,12 +76,23 @@ async function listTasks(req, res) {
   }
 }
 
+async function getZipCodeAddress(req, res) {
+  try {
+    const address = await clientService.getZipCodeAddress(req.params.code);
+    res.json(address);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 module.exports = (router, app) => {
-  router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
   router.post('/', createClient);
+  router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
   router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
-
   app.use('/clients', router);
+
+  app.get('/zip_codes/:code', getZipCodeAddress);
 };

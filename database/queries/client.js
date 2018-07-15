@@ -13,9 +13,9 @@ function throwClientNotFoundIfNeeded(client, options) {
 
 exports.getClient = async (id, options) => {
   const queryBuilder = Client.findById(id);
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const client = await queryBuilder.exec();
-  throwClientNotFoundIfNeeded(client, options || {});
+  throwClientNotFoundIfNeeded(client, filledOptions);
   return client;
 };
 
@@ -27,9 +27,9 @@ exports.findClient = async (query, options) => {
   } else {
     queryBuilder = Client.findOne(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const client = await queryBuilder.exec();
-  throwClientNotFoundIfNeeded(client, options || {});
+  throwClientNotFoundIfNeeded(client, filledOptions);
   return client;
 };
 
@@ -41,6 +41,6 @@ exports.findClients = async (query, options) => {
   } else {
     queryBuilder = Client.find(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  queryCommon.fillQuery(queryBuilder, options);
   return queryBuilder.exec();
 };

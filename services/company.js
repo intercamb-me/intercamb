@@ -2,14 +2,18 @@
 
 const accountQueries = require('database/queries/account');
 const companyQueries = require('database/queries/company');
+const planQueries = require('database/queries/plan');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
-const {Company} = require('models');
+const files = require('utils/files');
+const {Company, Plan} = require('models');
+const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
+const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color'];
 
-exports.getCompany = async (id) => {
-  return companyQueries.getCompany(id);
+exports.getCompany = async (id, options) => {
+  return companyQueries.getCompany(id, options);
 };
 
 exports.createCompany = async (account, name) => {
@@ -24,16 +28,28 @@ exports.createCompany = async (account, name) => {
   return company;
 };
 
-exports.updateCompany = async () => {
-
+exports.updateCompany = async (company, data) => {
+  const attrs = _.pick(data, ALLOWED_ATTRS);
+  const loadedCompany = await companyQueries.getCompany(company.id);
+  await loadedCompany.update(attrs, {runValidators: true});
+  loadedCompany.set(attrs);
+  return loadedCompany;
 };
 
-exports.updateCompanyLogo = async () => {
-
+exports.updateCompanyLogo = async (company, logoFile) => {
+  const loadedCompany = await companyQueries.getCompany(company.id);
+  const logoUrl = await files.uploadCompanyLogo(loadedCompany, logoFile.path);
+  await loadedCompany.update({logo_url: logoUrl}, {runValidators: true});
+  loadedCompany.logo_url = logoUrl;
+  return loadedCompany;
 };
 
 exports.listAccounts = async (company, options) => {
   return accountQueries.findAccounts({company: company.id}, options);
+};
+
+exports.listPlans = async (company, options) => {
+  return planQueries.findPlans({company: company.id}, options);
 };
 
 exports.listClients = async (company, ids, options) => {

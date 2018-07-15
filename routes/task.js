@@ -81,6 +81,5 @@ module.exports = (router, app) => {
   router.post('/:task/comments', [accountAuthenticated, taskBelongsToCompany], addTaskComment);
   router.post('/:task/attachments', [accountAuthenticated, taskBelongsToCompany, upload.single('file')], addTaskAttachment);
   router.get('/:task/attachments/:attachment/file', [accountAuthenticated, taskBelongsToCompany], getTaskAttachmentFile);
-
   app.use('/tasks', router);
 };

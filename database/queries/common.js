@@ -2,20 +2,22 @@
 
 const _ = require('lodash');
 
-exports.fillQuery = (promise, options) => {
-  if (!_.has(options, 'require')) {
-    options.require = true;
+exports.fillQuery = (query, options) => {
+  const filledOptions = options || {};
+  if (!_.has(filledOptions, 'require')) {
+    filledOptions.require = true;
   }
-  if (options.populate) {
-    promise.populate(options.populate);
+  if (filledOptions.populate) {
+    query.populate(filledOptions.populate);
   }
-  if (options.select) {
-    promise.select(options.select);
+  if (filledOptions.select) {
+    query.select(filledOptions.select);
   }
-  if (options.sort) {
-    promise.sort(options.sort);
+  if (filledOptions.sort) {
+    query.sort(filledOptions.sort);
   }
-  if (options.lean) {
-    promise.lean();
+  if (filledOptions.lean) {
+    query.lean();
   }
+  return filledOptions;
 };

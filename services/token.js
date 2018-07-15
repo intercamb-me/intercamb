@@ -8,7 +8,7 @@ const dateFns = require('date-fns');
 exports.getToken = async (id) => {
   const token = await tokenQueries.findToken((query) => {
     query.where('_id', id);
-    query.populate('company', {name: 1, logo_url: 1});
+    query.populate('company', {name: 1, logo_url: 1, primary_color: 1, text_color: 1});
   });
   if (token.expiration_date < new Date()) {
     await Token.remove({_id: token.id});

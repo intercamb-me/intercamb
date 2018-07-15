@@ -66,6 +66,16 @@ const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
   name: {type: String, required: true},
   logo_url: {type: String},
+  primary_color: {type: String},
+  text_color: {type: String},
+  registration_date: {type: Date, required: true},
+});
+
+const Plan = new Schema({
+  company: {type: ObjectId, ref: 'Company', required: true},
+  name: {type: String, required: true},
+  price: {type: Number, required: true},
+  currency: {type: String, required: true},
   registration_date: {type: Date, required: true},
 });
 
@@ -81,9 +91,10 @@ const Token = new Schema({
 exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) => {
   delete account.password;
 }));
-exports.Company = mongoose.model('Company', normalizeSchema(Company));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
+exports.Company = mongoose.model('Company', normalizeSchema(Company));
+exports.Plan = mongoose.model('Plan', normalizeSchema(Plan));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));
-exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));
 exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment));
+exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));
 exports.Token = mongoose.model('Token', normalizeSchema(Token));

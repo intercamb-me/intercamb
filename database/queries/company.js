@@ -13,9 +13,9 @@ function throwCompanyNotFoundIfNeeded(company, options) {
 
 exports.getCompany = async (id, options) => {
   const queryBuilder = Company.findById(id);
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const company = await queryBuilder.exec();
-  throwCompanyNotFoundIfNeeded(company, options || {});
+  throwCompanyNotFoundIfNeeded(company, filledOptions);
   return company;
 };
 
@@ -27,8 +27,8 @@ exports.findCompany = async (query, options) => {
   } else {
     queryBuilder = Company.findOne(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const company = await queryBuilder.exec();
-  throwCompanyNotFoundIfNeeded(company, options || {});
+  throwCompanyNotFoundIfNeeded(company, filledOptions);
   return company;
 };

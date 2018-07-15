@@ -14,7 +14,7 @@ Promise.promisifyAll(fs);
 
 const COMPANY_LOGO_DIMENSION = 160;
 const ACCOUNT_ICON_DIMENSION = 160;
-const CLIENT_PHOTO_DIMENSION = 128;
+const CLIENT_PHOTO_DIMENSION = 160;
 
 const s3 = new AWS.S3();
 
@@ -79,8 +79,7 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
     png: true,
     dimension: COMPANY_LOGO_DIMENSION,
   };
-  await uploadMedia(logoPath, file, options);
-  return file.name;
+  return await uploadMedia(logoPath, file, options);
 };
 
 exports.uploadAccountIcon = async (account, iconPath) => {
@@ -93,8 +92,7 @@ exports.uploadAccountIcon = async (account, iconPath) => {
     png: true,
     dimension: ACCOUNT_ICON_DIMENSION,
   };
-  await uploadMedia(iconPath, file, options);
-  return file.name;
+  return await uploadMedia(iconPath, file, options);
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {
@@ -107,8 +105,7 @@ exports.uploadClientPhoto = async (client, photoPath) => {
     png: true,
     dimension: CLIENT_PHOTO_DIMENSION,
   };
-  await uploadMedia(photoPath, file, options);
-  return file.name;
+  return await uploadMedia(photoPath, file, options);
 };
 
 exports.uploadTaskAttachment = async (task, taskFile) => {

@@ -2,7 +2,9 @@
 
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
+const brazilianStates = require('resources/brazilian_states');
 const {Client, Task} = require('models');
+const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
@@ -138,7 +140,7 @@ exports.createClient = async (company, data) => {
 
 exports.updateClient = async (client, data) => {
   const attrs = _.omit(data, UNALLOWED_CLIENT_ATTRS);
-  const loadedClient = await this.getClient(client.id);
+  const loadedClient = await clientQueries.getClient(client.id);
   await loadedClient.update(attrs, {runValidators: true});
   loadedClient.set(attrs);
   return loadedClient;
@@ -150,4 +152,19 @@ exports.removeClient = async () => {
 
 exports.listTasks = async (client, options) => {
   return taskQueries.findTasks({client: client.id}, options);
+};
+
+exports.getZipCodeAddress = async (code) => {
+  try {
+    const address = await cepPromise(code);
+    return {
+      zip_code: address.cep,
+      city: address.city,
+      state: brazilianStates[address.state],
+      neighborhood: address.neighborhood,
+      public_place: address.street,
+    };
+  } catch (err) {
+    throw errors.notFoundError('address_not_found', 'Address not found');
+  }
 };

@@ -89,6 +89,5 @@ module.exports = (router, app) => {
   router.put('/current/icon', [accountAuthenticated, upload.single('icon')], updateAccountIcon);
   router.post('/login', login);
   router.post('/logout', logout);
-
   app.use('/accounts', router);
 };

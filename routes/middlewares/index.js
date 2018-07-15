@@ -1,6 +1,7 @@
 'use strict';
 
 const accountService = require('services/account');
+const planService = require('services/plan');
 const clientService = require('services/client');
 const taskService = require('services/task');
 const session = require('database/session');
@@ -53,6 +54,21 @@ exports.taskBelongsToCompany = async (req, res, next) => {
     const task = await taskService.getTask(req.params.task, {select: 'company'});
     if (task.company.toString() !== account.company.toString()) {
       errors.respondWithError(res, errors.notFoundError('task_not_found', 'Task not found'));
+      return;
+    }
+    next();
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+};
+
+exports.planBelongsToCompany = async (req, res, next) => {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const plan = await planService.getPlan(req.params.plan, {select: 'company'});
+    if (plan.company.toString() !== account.company.toString()) {
+      errors.respondWithError(res, errors.notFoundError('plan_not_found', 'Plan not found'));
       return;
     }
     next();

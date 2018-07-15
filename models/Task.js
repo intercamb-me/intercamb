@@ -26,8 +26,8 @@ const Task = new Schema({
   name: {type: String, required: true},
   status: {type: String, required: true},
   schedule_date: {type: Date},
-  comments: {type: [TaskComment], default: undefined},
-  attachments: {type: [TaskAttachment], default: undefined},
+  comments: {type: [TaskComment]},
+  attachments: {type: [TaskAttachment]},
   registration_date: {type: Date, required: true},
 });
 

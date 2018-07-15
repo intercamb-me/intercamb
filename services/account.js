@@ -7,8 +7,8 @@ const cryptography = require('utils/cryptography');
 
 const DEFAULT_ICON_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 
-exports.getAccount = async (id) => {
-  return accountQueries.getAccount(id);
+exports.getAccount = async (id, options) => {
+  return accountQueries.getAccount(id, options);
 };
 
 exports.createAccount = async (firstName, lastName, email, password) => {

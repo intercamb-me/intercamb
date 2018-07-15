@@ -13,9 +13,9 @@ function throwAccountNotFoundIfNeeded(account, options) {
 
 exports.getAccount = async (id, options) => {
   const queryBuilder = Account.findById(id);
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const account = await queryBuilder.exec();
-  throwAccountNotFoundIfNeeded(account, options || {});
+  throwAccountNotFoundIfNeeded(account, filledOptions);
   return account;
 };
 
@@ -27,9 +27,9 @@ exports.findAccount = async (query, options) => {
   } else {
     queryBuilder = Account.findOne(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const account = await queryBuilder.exec();
-  throwAccountNotFoundIfNeeded(account, options || {});
+  throwAccountNotFoundIfNeeded(account, filledOptions);
   return account;
 };
 
@@ -41,6 +41,6 @@ exports.findAccounts = async (query, options) => {
   } else {
     queryBuilder = Account.find(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  queryCommon.fillQuery(queryBuilder, options);
   return queryBuilder.exec();
 };

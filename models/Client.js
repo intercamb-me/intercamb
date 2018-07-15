@@ -82,8 +82,17 @@ const AdditionalInformation = new Schema({
   how_did_you_know_the_company: {type: String},
 }, {_id: false});
 
+const PaymentMethod = new Schema({
+  company: {type: ObjectId, ref: 'Company', required: true},
+  client: {type: ObjectId, ref: 'Client', required: true},
+  method: {type: String, required: true},
+  amount: {type: String, required: true},
+  paid: {type: Boolean, required: true},
+});
+
 const Client = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
+  plan: {type: ObjectId, ref: 'Plan'},
   forename: {type: String, required: true},
   surname: {type: String, required: true},
   email: {type: String, required: true},
@@ -97,6 +106,7 @@ const Client = new Schema({
   academic_data: {type: AcademicData},
   intended_course: {type: IntendedCourse},
   additional_information: {type: AdditionalInformation},
+
 });
 
 exports.Client = Client;

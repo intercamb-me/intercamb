@@ -13,9 +13,9 @@ function throwTaskNotFoundIfNeeded(task, options) {
 
 exports.getTask = async (id, options) => {
   const queryBuilder = Task.findById(id);
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const task = await queryBuilder.exec();
-  throwTaskNotFoundIfNeeded(task, options || {});
+  throwTaskNotFoundIfNeeded(task, filledOptions);
   return task;
 };
 
@@ -27,9 +27,9 @@ exports.findTask = async (query, options) => {
   } else {
     queryBuilder = Task.findOne(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const task = await queryBuilder.exec();
-  throwTaskNotFoundIfNeeded(task, options || {});
+  throwTaskNotFoundIfNeeded(task, filledOptions);
   return task;
 };
 
@@ -41,6 +41,6 @@ exports.findTasks = async (query, options) => {
   } else {
     queryBuilder = Task.find(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
+  queryCommon.fillQuery(queryBuilder, options);
   return queryBuilder.exec();
 };

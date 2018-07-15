@@ -13,9 +13,9 @@ function throwTokenNotFoundIfNeeded(token, options) {
 
 exports.getToken = async (id, options) => {
   const queryBuilder = Token.findById(id);
-  queryCommon.fillQuery(queryBuilder, options || {});
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
   const token = await queryBuilder.exec();
-  throwTokenNotFoundIfNeeded(token, options || {});
+  throwTokenNotFoundIfNeeded(token, filledOptions);
   return token;
 };
 
@@ -27,8 +27,20 @@ exports.findToken = async (query, options) => {
   } else {
     queryBuilder = Token.findOne(query);
   }
-  queryCommon.fillQuery(queryBuilder, options || {});
-  const client = await queryBuilder.exec();
-  throwTokenNotFoundIfNeeded(client, options || {});
-  return client;
+  const filledOptions = queryCommon.fillQuery(queryBuilder, options);
+  const token = await queryBuilder.exec();
+  throwTokenNotFoundIfNeeded(token, filledOptions);
+  return token;
+};
+
+exports.findTokens = async (query, options) => {
+  let queryBuilder;
+  if (_.isFunction(query)) {
+    queryBuilder = Token.find();
+    query(queryBuilder);
+  } else {
+    queryBuilder = Token.find(query);
+  }
+  queryCommon.fillQuery(queryBuilder, options);
+  return queryBuilder.exec();
 };
