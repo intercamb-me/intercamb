@@ -154,7 +154,21 @@ exports.listTasks = async (client, options) => {
   return taskQueries.findTasks({client: client.id}, options);
 };
 
-exports.getZipCodeAddress = async (code) => {
+exports.associatePlan = async (client, plan) => {
+  const loadedClient = await clientQueries.getClient(client.id);
+  await loadedClient.update({plan: plan.id}, {runValidators: true});
+  loadedClient.plan = plan.id;
+  return loadedClient;
+};
+
+exports.dissociatePlan = async (client) => {
+  const loadedClient = await clientQueries.getClient(client.id);
+  await loadedClient.update({plan: null}, {runValidators: true});
+  loadedClient.plan = null;
+  return loadedClient;
+};
+
+exports.searchAddress = async (code) => {
   try {
     const address = await cepPromise(code);
     return {

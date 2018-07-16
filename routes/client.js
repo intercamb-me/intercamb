@@ -1,12 +1,12 @@
 'use strict';
 
-const {accountAuthenticated, clientBelongsToCompany} = require('routes/middlewares');
+const {accountAuthenticated, clientBelongsToCompany, planBelongsToCompany} = require('routes/middlewares');
 const accountService = require('services/account');
 const clientService = require('services/client');
 const tokenService = require('services/token');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
-const {Company, Client} = require('models');
+const {Company, Client, Plan} = require('models');
 
 async function createClient(req, res) {
   try {
@@ -67,7 +67,7 @@ async function removeClient(req, res) {
 
 async function listTasks(req, res) {
   try {
-    const client = new Company({id: req.params.client});
+    const client = new Client({id: req.params.client});
     const tasks = await clientService.listTasks(client);
     res.json(tasks);
   } catch (err) {
@@ -76,9 +76,32 @@ async function listTasks(req, res) {
   }
 }
 
-async function getZipCodeAddress(req, res) {
+async function associatePlan(req, res) {
   try {
-    const address = await clientService.getZipCodeAddress(req.params.code);
+    const client = new Client({id: req.params.client});
+    const plan = new Plan({id: req.params.plan});
+    await clientService.associatePlan(client, plan);
+    res.json({});
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function dissociatePlan(req, res) {
+  try {
+    const client = new Client({id: req.params.client});
+    await clientService.dissociatePlan(client);
+    res.json({});
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function searchAddress(req, res) {
+  try {
+    const address = await clientService.searchAddress(req.params.code);
     res.json(address);
   } catch (err) {
     logger.error(err);
@@ -92,7 +115,9 @@ module.exports = (router, app) => {
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
   router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
+  router.post('/:client/plans/:plan', [accountAuthenticated, clientBelongsToCompany, planBelongsToCompany], associatePlan);
+  router.delete('/:client/plans', [accountAuthenticated, clientBelongsToCompany], dissociatePlan);
   app.use('/clients', router);
 
-  app.get('/zip_codes/:code', getZipCodeAddress);
+  app.get('/zip_codes/:code', searchAddress);
 };
