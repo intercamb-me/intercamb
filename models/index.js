@@ -60,7 +60,7 @@ const Account = new Schema({
   password: {type: String, required: true},
   icon_url: {type: String},
   registration_date: {type: Date, required: true},
-});
+}, {collection: 'accounts'});
 
 const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
@@ -70,14 +70,24 @@ const Company = new Schema({
   primary_color: {type: String},
   text_color: {type: String},
   registration_date: {type: Date, required: true},
-});
+}, {collection: 'companies'});
+
+const PaymentOrder = new Schema({
+  company: {type: ObjectId, ref: 'Company', required: true},
+  client: {type: ObjectId, ref: 'Client', required: true},
+  method: {type: String, required: true},
+  amount: {type: Number, required: true},
+  paid: {type: Boolean},
+  payment_date: {type: Date},
+  registration_date: {type: Date, required: true},
+}, {collection: 'payment_orders'});
 
 const Plan = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   name: {type: String, required: true},
   price: {type: Number, required: true},
   registration_date: {type: Date, required: true},
-});
+}, {collection: 'plans'});
 
 const Token = new Schema({
   creator: {type: ObjectId, ref: 'Account', required: true},
@@ -86,13 +96,14 @@ const Token = new Schema({
   type: {type: String, required: true},
   expiration_date: {type: Date, required: true},
   registration_date: {type: Date, required: true},
-});
+}, {collection: 'tokens'});
 
 exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) => {
   delete account.password;
 }));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Company = mongoose.model('Company', normalizeSchema(Company));
+exports.PaymentOrder = mongoose.model('PaymentOrder', normalizeSchema(PaymentOrder));
 exports.Plan = mongoose.model('Plan', normalizeSchema(Plan));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));
 exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment));

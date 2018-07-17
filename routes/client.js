@@ -99,6 +99,28 @@ async function dissociatePlan(req, res) {
   }
 }
 
+async function registerPaymentOrders(req, res) {
+  try {
+    const client = new Client({id: req.params.client});
+    const paymentOrders = await clientService.registerPaymentOrders(client, req.body);
+    res.json(paymentOrders);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listPaymentOrders(req, res) {
+  try {
+    const client = new Client({id: req.params.client});
+    const paymentOrders = await clientService.listPaymentOrders(client);
+    res.json(paymentOrders);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 async function searchAddress(req, res) {
   try {
     const address = await clientService.searchAddress(req.params.code);
@@ -117,6 +139,8 @@ module.exports = (router, app) => {
   router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
   router.post('/:client/plans/:plan', [accountAuthenticated, clientBelongsToCompany, planBelongsToCompany], associatePlan);
   router.delete('/:client/plans', [accountAuthenticated, clientBelongsToCompany], dissociatePlan);
+  router.post('/:client/payment_orders', [accountAuthenticated, clientBelongsToCompany], registerPaymentOrders);
+  router.get('/:client/payment_orders', [accountAuthenticated, clientBelongsToCompany], listPaymentOrders);
   app.use('/clients', router);
 
   app.get('/zip_codes/:code', searchAddress);

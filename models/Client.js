@@ -82,16 +82,6 @@ const AdditionalInformation = new Schema({
   how_did_you_know_the_company: {type: String},
 }, {_id: false});
 
-const PaymentOrder = new Schema({
-  company: {type: ObjectId, ref: 'Company', required: true},
-  client: {type: ObjectId, ref: 'Client', required: true},
-  method: {type: String, required: true},
-  amount: {type: String, required: true},
-  paid: {type: Boolean},
-  payment_date: {type: Date},
-  registration_date: {type: Date, required: true},
-});
-
 const Client = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   plan: {type: ObjectId, ref: 'Plan'},
@@ -108,7 +98,7 @@ const Client = new Schema({
   academic_data: {type: AcademicData},
   intended_course: {type: IntendedCourse},
   additional_information: {type: AdditionalInformation},
-});
+}, {collection: 'clients'});
 Client.virtual('payment_orders', {
   ref: 'PaymentOrder',
   localField: '_id',

@@ -2,8 +2,9 @@
 
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
+const paymentOrderQueries = require('database/queries/paymentOrder');
 const brazilianStates = require('resources/brazilian_states');
-const {Client, Task} = require('models');
+const {Client, Task, PaymentOrder} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
@@ -166,6 +167,26 @@ exports.dissociatePlan = async (client) => {
   await loadedClient.update({plan: null}, {runValidators: true});
   loadedClient.plan = null;
   return loadedClient;
+};
+
+exports.registerPaymentOrders = async (client, paymentOrders) => {
+  const loadedClient = await clientQueries.getClient(client.id);
+  const orders = [];
+  paymentOrders.forEach((paymentOrder) => {
+    const order = new PaymentOrder({
+      client: loadedClient.id,
+      company: loadedClient.company,
+      method: paymentOrder.method,
+      amount: paymentOrder.amount,
+      registration_date: new Date(),
+    });
+    orders.push(order)
+  });
+  return PaymentOrder.insertMany(orders);
+};
+
+exports.listPaymentOrders = async (client, options) => {
+  return paymentOrderQueries.findPaymentOrders({client: client.id}, options);
 };
 
 exports.searchAddress = async (code) => {

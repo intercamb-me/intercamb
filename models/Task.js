@@ -29,7 +29,7 @@ const Task = new Schema({
   comments: {type: [TaskComment]},
   attachments: {type: [TaskAttachment]},
   registration_date: {type: Date, required: true},
-});
+}, {collection: 'tasks'});
 
 exports.Task = Task;
 exports.TaskComment = TaskComment;
