@@ -66,6 +66,7 @@ const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
   name: {type: String, required: true},
   logo_url: {type: String},
+  currency: {type: String},
   primary_color: {type: String},
   text_color: {type: String},
   registration_date: {type: Date, required: true},
@@ -75,7 +76,6 @@ const Plan = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   name: {type: String, required: true},
   price: {type: Number, required: true},
-  currency: {type: String, required: true},
   registration_date: {type: Date, required: true},
 });
 

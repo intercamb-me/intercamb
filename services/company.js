@@ -10,6 +10,7 @@ const {Company, Plan} = require('models');
 const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
+const DEFAULT_CURRENCY = 'BRL';
 const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color'];
 
 exports.getCompany = async (id, options) => {
@@ -21,6 +22,7 @@ exports.createCompany = async (account, name) => {
     name,
     owner: account.id,
     logo_url: DEFAULT_LOGO_URL,
+    currency: DEFAULT_CURRENCY,
     registration_date: new Date(),
   });
   await company.save();

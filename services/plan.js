@@ -4,7 +4,7 @@ const planQueries = require('database/queries/plan');
 const {Plan} = require('models');
 const _ = require('lodash');
 
-const ALLOWED_ATTRS = ['name', 'price', 'currency'];
+const ALLOWED_ATTRS = ['name', 'price'];
 
 exports.getPlan = async (id, options) => {
   return planQueries.getPlan(id, options);
@@ -15,7 +15,6 @@ exports.createPlan = async (company, data) => {
     company: company.id,
     name: data.name,
     price: data.price,
-    currency: data.currency,
     registration_date: new Date(),
   });
   return plan.save();
