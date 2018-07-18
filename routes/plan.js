@@ -43,9 +43,9 @@ async function updatePlan(req, res) {
 
 async function deletePlan(req, res) {
   try {
-    let plan = new Plan({id: req.params.plan});
-    plan = await planService.deletePlan(plan, req.body);
-    res.json(plan);
+    const plan = new Plan({id: req.params.plan});
+    await planService.deletePlan(plan, req.body);
+    res.json({});
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);

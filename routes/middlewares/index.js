@@ -4,6 +4,7 @@ const accountService = require('services/account');
 const planService = require('services/plan');
 const clientService = require('services/client');
 const taskService = require('services/task');
+const paymentService = require('services/payment');
 const session = require('database/session');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
@@ -69,6 +70,21 @@ exports.planBelongsToCompany = async (req, res, next) => {
     const plan = await planService.getPlan(req.params.plan, {select: 'company'});
     if (plan.company.toString() !== account.company.toString()) {
       errors.respondWithError(res, errors.notFoundError('plan_not_found', 'Plan not found'));
+      return;
+    }
+    next();
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+};
+
+exports.paymentOrderBelongsToCompany = async (req, res, next) => {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const paymentOrder = await paymentService.getPaymentOrder(req.params.payment_order, {select: 'company'});
+    if (paymentOrder.company.toString() !== account.company.toString()) {
+      errors.respondWithError(res, errors.notFoundError('payment_order_not_found', 'Payment order not found'));
       return;
     }
     next();

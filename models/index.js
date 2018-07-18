@@ -90,8 +90,8 @@ const Plan = new Schema({
 }, {collection: 'plans'});
 
 const Token = new Schema({
-  creator: {type: ObjectId, ref: 'Account', required: true},
   company: {type: ObjectId, ref: 'Company', required: true},
+  creator: {type: ObjectId, ref: 'Account', required: true},
   identifier: {type: String, required: true},
   type: {type: String, required: true},
   expiration_date: {type: Date, required: true},
