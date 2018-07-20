@@ -1,7 +1,6 @@
 'use strict';
 
 const paymentOrderQueries = require('database/queries/paymentOrder');
-const {PaymentOrder} = require('models');
 const _ = require('lodash');
 
 const ALLOWED_ATTRS = ['method', 'amount', 'paid', 'due_date', 'payment_date'];

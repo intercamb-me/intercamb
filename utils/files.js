@@ -79,7 +79,7 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
     png: true,
     dimension: COMPANY_LOGO_DIMENSION,
   };
-  return await uploadMedia(logoPath, file, options);
+  return uploadMedia(logoPath, file, options);
 };
 
 exports.uploadAccountIcon = async (account, iconPath) => {
@@ -92,7 +92,7 @@ exports.uploadAccountIcon = async (account, iconPath) => {
     png: true,
     dimension: ACCOUNT_ICON_DIMENSION,
   };
-  return await uploadMedia(iconPath, file, options);
+  return uploadMedia(iconPath, file, options);
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {
@@ -105,7 +105,7 @@ exports.uploadClientPhoto = async (client, photoPath) => {
     png: true,
     dimension: CLIENT_PHOTO_DIMENSION,
   };
-  return await uploadMedia(photoPath, file, options);
+  return uploadMedia(photoPath, file, options);
 };
 
 exports.uploadTaskAttachment = async (task, taskFile) => {

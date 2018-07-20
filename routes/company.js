@@ -79,20 +79,6 @@ async function listPlans(req, res) {
   }
 }
 
-async function createPlan(req, res) {
-  try {
-    const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
-    const plan = await companyService.createPlan(company, req.body);
-    res.json(plan);
-  } catch (err) {
-    logger.error(err);
-    errors.respondWithError(res, err);
-  }
-}
-
-
-
 async function listClients(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});

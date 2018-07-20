@@ -4,6 +4,7 @@ const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
 const paymentOrderQueries = require('database/queries/paymentOrder');
 const brazilianStates = require('resources/brazilian_states');
+const errors = require('utils/errors');
 const {Client, Task, PaymentOrder} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
@@ -181,7 +182,7 @@ exports.registerPaymentOrders = async (client, paymentOrders) => {
       due_date: paymentOrder.due_date,
       registration_date: new Date(),
     });
-    orders.push(order)
+    orders.push(order);
   });
   return PaymentOrder.insertMany(orders);
 };

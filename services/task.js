@@ -3,7 +3,7 @@
 const taskQueries = require('database/queries/task');
 const files = require('utils/files');
 const errors = require('utils/errors');
-const {Task, TaskComment, TaskAttachment} = require('models');
+const {TaskComment, TaskAttachment} = require('models');
 const _ = require('lodash');
 
 const UNALLOWED_TASK_ATTRS = ['_id', 'id', 'company', 'client', 'attachments', 'comments', 'registration_date'];

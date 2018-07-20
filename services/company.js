@@ -6,7 +6,7 @@ const planQueries = require('database/queries/plan');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
 const files = require('utils/files');
-const {Company, Plan} = require('models');
+const {Company} = require('models');
 const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
