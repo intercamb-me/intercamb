@@ -49,6 +49,13 @@ const FamilyData = new Schema({
   mother: {type: FamilyMemberData},
 }, {_id: false});
 
+const InCaseOfEmergency = new Schema({
+  responsible: {type: String},
+  email: {type: String},
+  phone: {type: String},
+  alternative_phone: {type: String},
+}, {_id: false});
+
 const HighSchoolData = new Schema({
   school: {type: String},
   city: {type: String},
@@ -95,6 +102,7 @@ const Client = new Schema({
   address: {type: Address},
   personal_data: {type: PersonalData},
   family_data: {type: FamilyData},
+  in_case_of_emergency: {type: InCaseOfEmergency},
   academic_data: {type: AcademicData},
   intended_course: {type: IntendedCourse},
   additional_information: {type: AdditionalInformation},
