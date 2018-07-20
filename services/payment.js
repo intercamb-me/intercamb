@@ -4,7 +4,7 @@ const paymentOrderQueries = require('database/queries/paymentOrder');
 const {PaymentOrder} = require('models');
 const _ = require('lodash');
 
-const ALLOWED_ATTRS = ['name', 'price'];
+const ALLOWED_ATTRS = ['method', 'amount', 'paid', 'due_date', 'payment_date'];
 
 exports.getPaymentOrder = async (id, options) => {
   return paymentOrderQueries.getPaymentOrder(id, options);

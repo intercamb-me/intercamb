@@ -5,6 +5,7 @@ const logger = require('utils/logger');
 const {Client} = require('models/Client');
 const {Task, TaskComment, TaskAttachment} = require('models/Task');
 const mongoose = require('mongoose');
+const DateOnly = require('mongoose-dateonly')(mongoose);
 const Promise = require('bluebird');
 
 const {Schema} = mongoose;
@@ -78,7 +79,8 @@ const PaymentOrder = new Schema({
   method: {type: String, required: true},
   amount: {type: Number, required: true},
   paid: {type: Boolean},
-  payment_date: {type: Date},
+  due_date: {type: DateOnly},
+  payment_date: {type: DateOnly},
   registration_date: {type: Date, required: true},
 }, {collection: 'payment_orders'});
 

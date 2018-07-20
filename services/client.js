@@ -178,6 +178,7 @@ exports.registerPaymentOrders = async (client, paymentOrders) => {
       company: loadedClient.company,
       method: paymentOrder.method,
       amount: paymentOrder.amount,
+      due_date: paymentOrder.due_date,
       registration_date: new Date(),
     });
     orders.push(order)
