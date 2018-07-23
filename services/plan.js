@@ -1,7 +1,7 @@
 'use strict';
 
 const planQueries = require('database/queries/plan');
-const {Plan} = require('models');
+const {Plan, Client} = require('models');
 const _ = require('lodash');
 
 const ALLOWED_ATTRS = ['name', 'price'];
@@ -29,6 +29,7 @@ exports.updatePlan = async (plan, data) => {
 };
 
 exports.deletePlan = async (plan) => {
+  await Client.update({plan: plan.id}, {plan: null});
   const loadedPlan = await planQueries.getPlan(plan.id);
   await loadedPlan.remove();
 };

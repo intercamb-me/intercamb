@@ -6,7 +6,9 @@ const planQueries = require('database/queries/plan');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
 const files = require('utils/files');
-const {Company} = require('models');
+const {Company, Client, PaymentOrder} = require('models');
+const DateOnly = require('dateonly');
+const dateFns = require('date-fns');
 const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
@@ -60,10 +62,29 @@ exports.listClients = async (company, ids, options) => {
     if (ids) {
       query.where('_id').in(ids);
     }
-  }, options || {select: 'forename surname email phone photo_url'});
+    query.sort('-registration_date');
+  }, options);
 };
 
-exports.listScheduledTasks = async (company, startDate, endDate) => {
+exports.searchClients = async (company, search, options) => {
+  const regexp = new RegExp(search, 'i');
+  return clientQueries.findClients((query) => {
+    query.where('company').equals(company.id);
+    query.or([
+      {forename: regexp},
+      {surname: regexp},
+      {email: regexp},
+      {phone: regexp},
+    ]);
+    query.sort('-registration_date');
+  }, options);
+};
+
+exports.countClients = async (company) => {
+  return Client.countDocuments({company: company.id});
+};
+
+exports.listTasks = async (company, startDate, endDate) => {
   return taskQueries.findTasks((query) => {
     query.where('company').equals(company.id);
     query.where('status').equals('pending');
@@ -71,4 +92,75 @@ exports.listScheduledTasks = async (company, startDate, endDate) => {
     query.sort('schedule_date');
     query.sort('name');
   });
+};
+
+exports.countTasks = async (company, startDate, endDate) => {
+  const query = Company.countDocuments();
+  query.where('company').equals(company.id);
+  query.where('status').equals('pending');
+  query.where('schedule_date').gte(startDate).lte(endDate);
+  return query.exec();
+};
+
+exports.getClientsPerMonthReport = async (company) => {
+  let startDate = new Date();
+  startDate = dateFns.startOfMonth(startDate);
+  startDate = dateFns.addMonths(startDate, -12);
+  const aggregate = Client.aggregate();
+  aggregate.match({company: company._id, registration_date: {$gte: startDate}});
+  aggregate.group({
+    _id: {
+        year: {$year: '$registration_date'},
+        month: {$month: '$registration_date'},
+    },
+    count: {$sum: 1},
+  });
+  return aggregate.exec();
+};
+
+exports.getClientsPerPlanReport = async (company) => {
+  let startDate = new Date();
+  startDate = dateFns.startOfMonth(startDate);
+  startDate = dateFns.addMonths(startDate, -12);
+  const aggregate = Client.aggregate();
+  aggregate.match({company: company._id, registration_date: {$gte: startDate}});
+  aggregate.group({
+    _id: '$plan',
+    count: {$sum: 1},
+  });
+  return aggregate.exec();
+};
+
+exports.getBillingPerMonthReport = async (company) => {
+  let startDate = new Date();
+  startDate = dateFns.startOfMonth(startDate);
+  startDate = dateFns.addMonths(startDate, -12);
+  const aggregate = PaymentOrder.aggregate();
+  aggregate.match({company: company._id, payment_date: {$gte: new DateOnly(startDate).valueOf()}});
+  aggregate.group({
+    _id: {
+      $let: {
+        vars: {
+          date: {
+            $dateFromString: {
+              dateString: {
+                $toString: {
+                  $toLong: {
+                    $add: ['$payment_date', 100]
+                  }
+                }
+              },
+              format: '%Y%m%d',
+            },
+          },
+        },
+        in: {
+          year: {$year: '$$date'},
+          month: {$month: '$$date'},
+        },
+      },
+    },
+    amount: {$sum: '$amount'},
+  });
+  return aggregate.exec();
 };

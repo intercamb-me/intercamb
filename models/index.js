@@ -54,7 +54,7 @@ function normalizeSchema(schema, customTransform) {
 }
 
 const Account = new Schema({
-  company: {type: ObjectId, ref: 'Company'},
+  company: {type: ObjectId, ref: 'Company', index: true},
   first_name: {type: String, required: true},
   last_name: {type: String, required: true},
   email: {type: String, required: true, unique: true},
@@ -75,24 +75,23 @@ const Company = new Schema({
 
 const PaymentOrder = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
-  client: {type: ObjectId, ref: 'Client', required: true},
+  client: {type: ObjectId, ref: 'Client', required: true, index: true},
   method: {type: String, required: true},
   amount: {type: Number, required: true},
-  paid: {type: Boolean},
   due_date: {type: DateOnly},
   payment_date: {type: DateOnly},
   registration_date: {type: Date, required: true},
 }, {collection: 'payment_orders'});
 
 const Plan = new Schema({
-  company: {type: ObjectId, ref: 'Company', required: true},
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
   name: {type: String, required: true},
   price: {type: Number, required: true},
   registration_date: {type: Date, required: true},
 }, {collection: 'plans'});
 
 const Token = new Schema({
-  company: {type: ObjectId, ref: 'Company', required: true},
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
   creator: {type: ObjectId, ref: 'Account', required: true},
   identifier: {type: String, required: true},
   type: {type: String, required: true},

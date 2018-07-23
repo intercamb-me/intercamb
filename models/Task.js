@@ -21,8 +21,8 @@ const TaskComment = new Schema({
 });
 
 const Task = new Schema({
-  company: {type: ObjectId, ref: 'Company', required: true},
-  client: {type: ObjectId, ref: 'Client', required: true},
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
+  client: {type: ObjectId, ref: 'Client', required: true, index: true},
   name: {type: String, required: true},
   status: {type: String, required: true},
   schedule_date: {type: Date},

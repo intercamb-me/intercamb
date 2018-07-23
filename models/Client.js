@@ -90,7 +90,7 @@ const AdditionalInformation = new Schema({
 }, {_id: false});
 
 const Client = new Schema({
-  company: {type: ObjectId, ref: 'Company', required: true},
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
   plan: {type: ObjectId, ref: 'Plan'},
   forename: {type: String, required: true},
   surname: {type: String, required: true},
