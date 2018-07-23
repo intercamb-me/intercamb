@@ -125,18 +125,6 @@ async function countTasks(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: '_id'});
-    const tasks = await companyService.countTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)));
-    res.json(tasks);
-  } catch (err) {
-    logger.error(err);
-    errors.respondWithError(res, err);
-  }
-}
-
-async function countTasks(req, res) {
-  try {
-    const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
     const count = await companyService.countTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)));
     res.json({count});
   } catch (err) {

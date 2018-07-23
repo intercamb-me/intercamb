@@ -110,8 +110,8 @@ exports.getClientsPerMonthReport = async (company) => {
   aggregate.match({company: company._id, registration_date: {$gte: startDate}});
   aggregate.group({
     _id: {
-        year: {$year: '$registration_date'},
-        month: {$month: '$registration_date'},
+      year: {$year: '$registration_date'},
+      month: {$month: '$registration_date'},
     },
     count: {$sum: 1},
   });
@@ -146,9 +146,9 @@ exports.getBillingPerMonthReport = async (company) => {
               dateString: {
                 $toString: {
                   $toLong: {
-                    $add: ['$payment_date', 100]
-                  }
-                }
+                    $add: ['$payment_date', 100],
+                  },
+                },
               },
               format: '%Y%m%d',
             },
