@@ -49,9 +49,9 @@ async function updateAccount(req, res) {
   }
 }
 
-async function updateAccountIcon(req, res) {
+async function updateAccountImage(req, res) {
   try {
-    const account = await accountService.updateIcon(req.account, req.file);
+    const account = await accountService.updateAccountImage(req.account, req.file);
     res.json(account);
   } catch (err) {
     logger.error(err);
@@ -86,7 +86,7 @@ module.exports = (router, app) => {
   router.post('', createAccount);
   router.get('/current', getAccount);
   router.put('/current', accountAuthenticated, updateAccount);
-  router.put('/current/icon', [accountAuthenticated, upload.single('icon')], updateAccountIcon);
+  router.put('/current/image', [accountAuthenticated, upload.single('image')], updateAccountImage);
   router.post('/login', login);
   router.post('/logout', logout);
   app.use('/accounts', router);

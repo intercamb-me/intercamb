@@ -102,14 +102,6 @@ async function createTasks(company, client) {
     schedulable: true,
     registration_date: now,
   });
-  const otherDocuments = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Outros documentos',
-    status: 'pending',
-    schedulable: false,
-    registration_date: now,
-  });
   return Task.insertMany([
     contract,
     identityCard,
@@ -122,7 +114,6 @@ async function createTasks(company, client) {
     foreignCriminalRecords,
     foreignIdentity,
     reception,
-    otherDocuments,
   ]);
 }
 

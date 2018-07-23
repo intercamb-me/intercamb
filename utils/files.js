@@ -13,7 +13,7 @@ Promise.promisifyAll(mkdirp);
 Promise.promisifyAll(fs);
 
 const COMPANY_LOGO_DIMENSION = 160;
-const ACCOUNT_ICON_DIMENSION = 160;
+const ACCOUNT_IMAGE_DIMENSION = 160;
 const CLIENT_PHOTO_DIMENSION = 160;
 
 const s3 = new AWS.S3();
@@ -82,17 +82,17 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
   return uploadMedia(logoPath, file, options);
 };
 
-exports.uploadAccountIcon = async (account, iconPath) => {
+exports.uploadAccountImage = async (account, imagePath) => {
   const file = {
-    name: `icon_${Date.now()}.png`,
+    name: `image_${Date.now()}.png`,
     relativeDir: path.join('accounts', account.id),
     mimeType: 'image/png',
   };
   const options = {
     png: true,
-    dimension: ACCOUNT_ICON_DIMENSION,
+    dimension: ACCOUNT_IMAGE_DIMENSION,
   };
-  return uploadMedia(iconPath, file, options);
+  return uploadMedia(imagePath, file, options);
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {

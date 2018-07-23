@@ -121,18 +121,6 @@ async function listTasks(req, res) {
   }
 }
 
-async function countTasks(req, res) {
-  try {
-    const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
-    const count = await companyService.countTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)));
-    res.json({count});
-  } catch (err) {
-    logger.error(err);
-    errors.respondWithError(res, err);
-  }
-}
-
 async function getClientsPerMonthReport(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
@@ -179,7 +167,6 @@ module.exports = (router, app) => {
   router.get('/current/clients', accountAuthenticated, listClients);
   router.get('/current/clients/count', accountAuthenticated, countClients);
   router.get('/current/tasks', accountAuthenticated, listTasks);
-  router.get('/current/tasks/count', accountAuthenticated, countTasks);
   router.get('/current/reports/clients_per_month', accountAuthenticated, getClientsPerMonthReport);
   router.get('/current/reports/clients_per_plan', accountAuthenticated, getClientsPerPlanReport);
   router.get('/current/reports/billing_per_month', accountAuthenticated, getBillingPerMonthReport);

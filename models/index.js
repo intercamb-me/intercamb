@@ -59,7 +59,7 @@ const Account = new Schema({
   last_name: {type: String, required: true},
   email: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  icon_url: {type: String},
+  image_url: {type: String},
   registration_date: {type: Date, required: true},
 }, {collection: 'accounts'});
 

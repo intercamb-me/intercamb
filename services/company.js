@@ -94,14 +94,6 @@ exports.listTasks = async (company, startDate, endDate) => {
   });
 };
 
-exports.countTasks = async (company, startDate, endDate) => {
-  const query = Company.countDocuments();
-  query.where('company').equals(company.id);
-  query.where('status').equals('pending');
-  query.where('schedule_date').gte(startDate).lte(endDate);
-  return query.exec();
-};
-
 exports.getClientsPerMonthReport = async (company) => {
   let startDate = new Date();
   startDate = dateFns.startOfMonth(startDate);
