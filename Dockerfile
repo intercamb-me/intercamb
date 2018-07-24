@@ -1,4 +1,4 @@
-FROM node:carbon-alpine
+FROM keymetrics/pm2:8-alpine
 WORKDIR /usr/src/intercambio
 COPY ./package*.json ./
 RUN \
@@ -9,11 +9,9 @@ RUN \
   apk add --update --no-cache --virtual .build-deps make gcc g++ python && \
   apk add --update --no-cache vips-dev fftw-dev && \
   npm install --production && \
-  npm install pm2 -g && \
   npm rebuild bcrypt --build-from-source && \
   apk del .build-deps fftw-dev && \
   rm -rf /var/cache/apk/* /tmp/* && \
   touch config.yml
 COPY . .
 EXPOSE 3000
-CMD ["pm2-docker", "process.json"]
