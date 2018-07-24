@@ -1,9 +1,9 @@
 version: "3.4"
 services:
-  ayro:
-    image: "ayro:latest"
-    container_name: "ayro"
-    hostname: "ayro"
+  intercambio:
+    image: "intercambio:latest"
+    container_name: "intercambio"
+    hostname: "intercambio"
     network_mode: "host"
     volumes:
-      - "./config.yml:/usr/src/ayro/config.yml"
+      - "./config.yml:/usr/src/intercambio/config.yml"

@@ -25,7 +25,7 @@ function ApiError(status, code, message, cause) {
 }
 util.inherits(ApiError, Error);
 
-exports.ayroError = (code, message, cause) => {
+exports.apiError = (code, message, cause) => {
   return new ApiError(400, code, message, cause);
 };
 

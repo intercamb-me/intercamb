@@ -12,7 +12,7 @@ exports.env = _.get(config, 'app.env', constants.environments.DEVELOPMENT);
 exports.port = _.get(config, 'app.port', 3000);
 exports.debug = _.get(config, 'app.debug', false);
 
-exports.publicUrl = this.env === constants.environments.PRODUCTION ? 'https://api.intercambio.io' : `http://localhost:${this.port}`;
+exports.publicUrl = this.env === constants.environments.PRODUCTION ? 'https://api.intercamb.me' : `http://localhost:${this.port}`;
 exports.publicPath = _.get(config, 'app.publicPath', path.resolve('public'));
 
 exports.uploadsUrl = `${this.publicUrl}/uploads`;
@@ -22,7 +22,7 @@ exports.mediaUrl = `${this.publicUrl}/media`;
 exports.mediaPath = path.join(this.publicPath, 'media');
 
 exports.mediaS3Bucket = 'intercambio-media';
-exports.mediaCDNUrl = 'https://media.intercambio.io';
+exports.mediaCDNUrl = 'https://media.intercamb.me';
 
 exports.session = {
   prefix: 'session:',

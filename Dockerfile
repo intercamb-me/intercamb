@@ -1,5 +1,5 @@
 FROM node:carbon-alpine
-WORKDIR /usr/src/ayro
+WORKDIR /usr/src/intercambio
 COPY ./package*.json ./
 COPY ./.npmrc .npmrc
 RUN \
@@ -17,4 +17,4 @@ RUN \
   touch config.yml
 COPY . .
 EXPOSE 3000
-CMD ["pm2-docker", "process.json", "--only", "Ayro"]
+CMD ["pm2-docker", "process.json", "--only", "Intercambio"]

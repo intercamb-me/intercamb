@@ -5,10 +5,10 @@
   "private": true,
   "author": {
     "name": "Intercambio team",
-    "email": "team@intercambio.io",
-    "url": "https://intercambio.io"
+    "email": "team@intercamb.me",
+    "url": "https://intercamb.me"
   },
-  "homepage": "https://intercambio.io",
+  "homepage": "https://intercamb.me",
   "scripts": {
     "lint": "eslint '**/*.js'",
     "start": "node app.js",
@@ -18,7 +18,8 @@
   "devDependencies": {
     "eslint": "5.2.0",
     "eslint-config-airbnb-base": "13.0.0",
-    "eslint-plugin-import": "2.13.0"
+    "eslint-plugin-import": "2.13.0",
+    "release-n-publish": "0.0.4"
   },
   "dependencies": {
     "app-module-path": "2.2.0",

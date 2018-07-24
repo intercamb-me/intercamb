@@ -51,7 +51,7 @@ exports.authenticate = async (email, password) => {
   const account = await accountQueries.findAccount({email});
   const match = await cryptography.compare(password, account.password);
   if (!match) {
-    throw errors.ayroError('wrong_password', 'Wrong account password');
+    throw errors.apiError('wrong_password', 'Wrong account password');
   }
   return account;
 };
