@@ -16,8 +16,11 @@ if (require.main === module) {
   publish.setLintTask(lintProject);
   publish.setDockerProject({
     ecr: {
-      repositoryUrl: '554511234717.dkr.ecr.us-west-1.amazonaws.com',
-      repositoryNamespace: 'intercambio',
+      region: 'us-west-1',
+      repository: {
+        url: '554511234717.dkr.ecr.us-west-1.amazonaws.com',
+        namespace: 'intercambio',
+      },
     },
   });
   publish.run();

@@ -1,7 +1,7 @@
 {
   "name": "intercambio",
   "description": "Intercambio Backend",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "author": {
     "name": "Intercambio team",
@@ -19,7 +19,7 @@
     "eslint": "5.2.0",
     "eslint-config-airbnb-base": "13.0.0",
     "eslint-plugin-import": "2.13.0",
-    "release-n-publish": "0.0.4"
+    "release-n-publish": "0.0.6"
   },
   "dependencies": {
     "app-module-path": "2.2.0",
