@@ -1,7 +1,6 @@
 FROM node:carbon-alpine
 WORKDIR /usr/src/intercambio
 COPY ./package*.json ./
-COPY ./.npmrc .npmrc
 RUN \
   echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
   echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
