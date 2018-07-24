@@ -1,6 +1,7 @@
 /.dockerignore
 /.eslintignore
 /.eslintrc
+/.npmrc
 /.git
 /.gitignore
 /config.yml
