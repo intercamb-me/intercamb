@@ -16,4 +16,4 @@ RUN \
   touch config.yml
 COPY . .
 EXPOSE 3000
-CMD ["pm2-docker", "process.json", "--only", "Intercambio Backend"]
+CMD ["pm2-docker", "process.json"]
