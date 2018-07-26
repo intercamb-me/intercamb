@@ -51,6 +51,7 @@ const FamilyData = new Schema({
 
 const InCaseOfEmergency = new Schema({
   responsible: {type: String},
+  bond: {type: String},
   email: {type: String},
   phone: {type: String},
   alternative_phone: {type: String},
