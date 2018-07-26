@@ -23,9 +23,8 @@ exports.createPlan = async (company, data) => {
 exports.updatePlan = async (plan, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
   const loadedPlan = await planQueries.getPlan(plan.id);
-  await loadedPlan.update(attrs, {runValidators: true});
   loadedPlan.set(attrs);
-  return loadedPlan;
+  return loadedPlan.save();
 };
 
 exports.deletePlan = async (plan) => {

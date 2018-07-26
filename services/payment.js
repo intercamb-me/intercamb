@@ -12,9 +12,8 @@ exports.getPaymentOrder = async (id, options) => {
 exports.updatePaymentOrder = async (paymentOrder, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
   const loadedPaymentOrder = await paymentOrderQueries.getPaymentOrder(paymentOrder.id);
-  await loadedPaymentOrder.update(attrs, {runValidators: true});
   loadedPaymentOrder.set(attrs);
-  return loadedPaymentOrder;
+  return loadedPaymentOrder.save();
 };
 
 exports.deletePaymentOrder = async (paymentOrder) => {

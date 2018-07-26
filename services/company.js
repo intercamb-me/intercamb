@@ -28,24 +28,22 @@ exports.createCompany = async (account, name) => {
     registration_date: new Date(),
   });
   await company.save();
-  await account.update({company: company.id}, {runValidators: true});
+  await account.update({company: company.id});
   return company;
 };
 
 exports.updateCompany = async (company, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
   const loadedCompany = await companyQueries.getCompany(company.id);
-  await loadedCompany.update(attrs, {runValidators: true});
   loadedCompany.set(attrs);
-  return loadedCompany;
+  return loadedCompany.save();
 };
 
 exports.updateCompanyLogo = async (company, logoFile) => {
   const loadedCompany = await companyQueries.getCompany(company.id);
   const logoUrl = await files.uploadCompanyLogo(loadedCompany, logoFile.path);
-  await loadedCompany.update({logo_url: logoUrl}, {runValidators: true});
   loadedCompany.logo_url = logoUrl;
-  return loadedCompany;
+  return loadedCompany.save();
 };
 
 exports.listAccounts = async (company, options) => {

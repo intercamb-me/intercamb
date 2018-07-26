@@ -15,6 +15,10 @@ exports.getAccount = async (id, options) => {
 };
 
 exports.createAccount = async (firstName, lastName, email, password) => {
+  const accountWithEmail = await accountQueries.findAccount({email}, {require: false});
+  if (accountWithEmail) {
+    throw errors.apiError('account_already_exists', 'Account already exists');
+  }
   const hash = await cryptography.hash(password);
   const account = new Account({
     email,
@@ -30,17 +34,15 @@ exports.createAccount = async (firstName, lastName, email, password) => {
 exports.updateAccount = async (account, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
   const loadedAccount = await accountQueries.getAccount(account.id);
-  await loadedAccount.update(attrs, {runValidators: true});
   loadedAccount.set(attrs);
-  return loadedAccount;
+  return loadedAccount.save();
 };
 
 exports.updateAccountImage = async (account, imageFile) => {
   const loadedAccount = await accountQueries.getAccount(account.id);
   const imageUrl = await files.uploadAccountImage(loadedAccount, imageFile.path);
-  await loadedAccount.update({image_url: imageUrl}, {runValidators: true});
   loadedAccount.image_url = imageUrl;
-  return loadedAccount;
+  return loadedAccount.save();
 };
 
 exports.removeAccount = async () => {

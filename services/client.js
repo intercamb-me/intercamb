@@ -134,9 +134,8 @@ exports.createClient = async (company, data) => {
 exports.updateClient = async (client, data) => {
   const attrs = _.omit(data, UNALLOWED_CLIENT_ATTRS);
   const loadedClient = await clientQueries.getClient(client.id);
-  await loadedClient.update(attrs, {runValidators: true});
   loadedClient.set(attrs);
-  return loadedClient;
+  return loadedClient.save();
 };
 
 exports.removeClient = async () => {
@@ -149,16 +148,14 @@ exports.listTasks = async (client, options) => {
 
 exports.associatePlan = async (client, plan) => {
   const loadedClient = await clientQueries.getClient(client.id);
-  await loadedClient.update({plan: plan.id}, {runValidators: true});
   loadedClient.plan = plan.id;
-  return loadedClient;
+  return loadedClient.save();
 };
 
 exports.dissociatePlan = async (client) => {
   const loadedClient = await clientQueries.getClient(client.id);
-  await loadedClient.update({plan: null}, {runValidators: true});
   loadedClient.plan = null;
-  return loadedClient;
+  return loadedClient.save();
 };
 
 exports.registerPaymentOrders = async (client, paymentOrders) => {

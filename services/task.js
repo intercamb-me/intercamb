@@ -15,9 +15,8 @@ exports.getTask = async (id, options) => {
 exports.updateTask = async (task, data) => {
   const attrs = _.omit(data, UNALLOWED_TASK_ATTRS);
   const loadedTask = await taskQueries.getTask(task.id);
-  await loadedTask.update(attrs, {runValidators: true});
   loadedTask.set(attrs);
-  return loadedTask;
+  return loadedTask.save();
 };
 
 exports.addTaskComment = async (account, task, text) => {
