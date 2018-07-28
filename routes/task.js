@@ -2,6 +2,7 @@
 
 const settings = require('configs/settings');
 const {accountAuthenticated, taskBelongsToCompany} = require('routes/middlewares');
+const helpers = require('routes/helpers');
 const taskService = require('services/task');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
@@ -12,7 +13,7 @@ const upload = multer({dest: settings.uploadsPath});
 
 async function getTask(req, res) {
   try {
-    const task = await taskService.getTask(req.params.task);
+    const task = await taskService.getTask(req.params.task, helpers.getOptions(req));
     res.json(task);
   } catch (err) {
     logger.error(err);

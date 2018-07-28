@@ -1,6 +1,7 @@
 'use strict';
 
 const {accountAuthenticated, clientBelongsToCompany, planBelongsToCompany} = require('routes/middlewares');
+const helpers = require('routes/helpers');
 const accountService = require('services/account');
 const clientService = require('services/client');
 const tokenService = require('services/token');
@@ -35,7 +36,7 @@ async function createClient(req, res) {
 
 async function getClient(req, res) {
   try {
-    const client = await clientService.getClient(req.params.client);
+    const client = await clientService.getClient(req.params.client, helpers.getOptions(req));
     res.json(client);
   } catch (err) {
     logger.error(err);

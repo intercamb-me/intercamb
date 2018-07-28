@@ -2,6 +2,7 @@
 
 const settings = require('configs/settings');
 const {accountAuthenticated} = require('routes/middlewares');
+const helpers = require('routes/helpers');
 const accountService = require('services/account');
 const companyService = require('services/company');
 const errors = require('utils/errors');
@@ -9,6 +10,16 @@ const logger = require('utils/logger');
 const multer = require('multer');
 
 const upload = multer({dest: settings.uploadsPath});
+
+async function listAllInstitutions(req, res) {
+  try {
+    const institutions = await companyService.listAllInstitutions();
+    res.json(institutions);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
 
 async function createCompany(req, res) {
   try {
@@ -23,7 +34,7 @@ async function createCompany(req, res) {
 async function getCompany(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company);
+    const company = await companyService.getCompany(account.company, helpers.getOptions(req));
     res.json(company);
   } catch (err) {
     logger.error(err);
@@ -113,7 +124,7 @@ async function listTasks(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: '_id'});
-    const tasks = await companyService.listTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)));
+    const tasks = await companyService.listTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)), helpers.getOptions(req));
     res.json(tasks);
   } catch (err) {
     logger.error(err);
@@ -158,6 +169,7 @@ async function getBillingPerMonthReport(req, res) {
 }
 
 module.exports = (router, app) => {
+  router.post('/institutions', accountAuthenticated, listAllInstitutions);
   router.post('', accountAuthenticated, createCompany);
   router.get('/current', accountAuthenticated, getCompany);
   router.put('/current', accountAuthenticated, updateCompany);

@@ -21,6 +21,9 @@ exports.uploadsPath = path.join(this.publicPath, 'uploads');
 exports.mediaUrl = `${this.publicUrl}/media`;
 exports.mediaPath = path.join(this.publicPath, 'media');
 
+exports.publicS3Bucket = 'intercambio-public';
+exports.publicCDNUrl = 'https://public.intercamb.me';
+
 exports.mediaS3Bucket = 'intercambio-media';
 exports.mediaCDNUrl = 'https://media.intercamb.me';
 

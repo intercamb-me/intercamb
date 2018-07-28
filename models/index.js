@@ -71,7 +71,23 @@ const Company = new Schema({
   primary_color: {type: String},
   text_color: {type: String},
   registration_date: {type: Date, required: true},
+  available_institutions: {type: [String]},
 }, {collection: 'companies'});
+Company.virtual('accounts', {
+  ref: 'Account',
+  localField: '_id',
+  foreignField: 'company',
+});
+Company.virtual('plans', {
+  ref: 'Plan',
+  localField: '_id',
+  foreignField: 'company',
+});
+Company.virtual('tokens', {
+  ref: 'Token',
+  localField: '_id',
+  foreignField: 'company',
+});
 
 const PaymentOrder = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},

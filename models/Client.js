@@ -113,5 +113,10 @@ Client.virtual('payment_orders', {
   localField: '_id',
   foreignField: 'client',
 });
+Client.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'client',
+});
 
 exports.Client = Client;

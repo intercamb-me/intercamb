@@ -8,7 +8,13 @@ exports.fillQuery = (query, options) => {
     filledOptions.require = true;
   }
   if (filledOptions.populate) {
-    query.populate(filledOptions.populate);
+    if (_.isArray(filledOptions.populate)) {
+      _.forEach(filledOptions.populate, (populate) => {
+        query.populate(populate);
+      });
+    } else {
+      query.populate(filledOptions.populate);
+    }
   }
   if (filledOptions.select) {
     query.select(filledOptions.select);

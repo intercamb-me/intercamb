@@ -5,6 +5,7 @@ const companyQueries = require('database/queries/company');
 const planQueries = require('database/queries/plan');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
+const institutions = require('resources/institutions');
 const files = require('utils/files');
 const {Company, Client, PaymentOrder} = require('models');
 const DateOnly = require('dateonly');
@@ -14,6 +15,10 @@ const _ = require('lodash');
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const DEFAULT_CURRENCY = 'BRL';
 const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color'];
+
+exports.listAllInstitutions = async () => {
+  return _.cloneDeep(institutions);
+};
 
 exports.getCompany = async (id, options) => {
   return companyQueries.getCompany(id, options);
@@ -82,14 +87,14 @@ exports.countClients = async (company) => {
   return Client.countDocuments({company: company.id});
 };
 
-exports.listTasks = async (company, startDate, endDate) => {
+exports.listTasks = async (company, startDate, endDate, options) => {
   return taskQueries.findTasks((query) => {
     query.where('company').equals(company.id);
     query.where('status').equals('pending');
     query.where('schedule_date').gte(startDate).lte(endDate);
     query.sort('schedule_date');
     query.sort('name');
-  });
+  }, options);
 };
 
 exports.getClientsPerMonthReport = async (company) => {

@@ -35,10 +35,12 @@ async function processImage(inputFile, outputFile, options) {
   return transformer.toFile(outputFile);
 }
 
-async function uploadMedia(sourcePath, file, options) {
+async function uploadMedia(sourcePath, file, options, publicMode) {
   let fileUrl = null;
   const relativePath = path.join(file.relativeDir, file.name);
   if (settings.env === constants.environments.PRODUCTION) {
+    const cdnUrl = publicMode ? settings.publicCDNUrl : settings.mediaCDNUrl;
+    const bucket = publicMode ? settings.publicS3Bucket : settings.mediaS3Bucket;
     const sourceDir = path.dirname(sourcePath);
     const sourceFileName = path.basename(sourcePath);
     const finalPath = path.join(sourceDir, `${sourceFileName}_${Date.now()}`);
@@ -46,12 +48,12 @@ async function uploadMedia(sourcePath, file, options) {
       await processImage(sourcePath, finalPath, options);
     }
     await s3.putObject({
-      Bucket: settings.mediaS3Bucket,
+      Bucket: bucket,
       Key: relativePath,
       Body: await fs.readFileAsync(finalPath),
       ContentType: file.mimeType,
     }).promise();
-    fileUrl = `${settings.mediaCDNUrl}/${relativePath}`;
+    fileUrl = `${cdnUrl}/${relativePath}`;
     await fs.unlinkAsync(sourcePath);
     await fs.unlinkAsync(finalPath);
   } else {
@@ -79,7 +81,7 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
     png: true,
     dimension: COMPANY_LOGO_DIMENSION,
   };
-  return uploadMedia(logoPath, file, options);
+  return uploadMedia(logoPath, file, options, true);
 };
 
 exports.uploadAccountImage = async (account, imagePath) => {
@@ -92,7 +94,7 @@ exports.uploadAccountImage = async (account, imagePath) => {
     png: true,
     dimension: ACCOUNT_IMAGE_DIMENSION,
   };
-  return uploadMedia(imagePath, file, options);
+  return uploadMedia(imagePath, file, options, true);
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {
@@ -105,7 +107,7 @@ exports.uploadClientPhoto = async (client, photoPath) => {
     png: true,
     dimension: CLIENT_PHOTO_DIMENSION,
   };
-  return uploadMedia(photoPath, file, options);
+  return uploadMedia(photoPath, file, options, true);
 };
 
 exports.uploadTaskAttachment = async (task, taskFile) => {
