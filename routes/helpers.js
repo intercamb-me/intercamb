@@ -3,26 +3,28 @@
 const _ = require('lodash');
 
 exports.getOptions = (req) => {
-  let populate;
+  const populateByPath = {};
+  const select = [];
   if (req.query.populate) {
-    populate = [];
-    const populateByPath = {};
     const fields = req.query.populate.split(' ');
     _.forEach(fields, (field) => {
-      const fieldSplit = field.split('.');
-      const path = fieldSplit[0];
-      populateByPath[path] = populateByPath[path] || [];
-      if (fieldSplit.length === 2) {
-        const select = fieldSplit[1];
-        populateByPath[path].push(select);
-      }
-    });
-    _.forEach(populateByPath, (select, path) => {
-      populate.push({path, select: select.join(' ')});
+      populateByPath[field] = {path: field, select: []};
     });
   }
-  return {
-    populate,
-    select: req.query.select,
-  };
+  if (req.query.select) {
+    const fields = req.query.select.split(' ');
+    _.forEach(fields, (field) => {
+      const separatorIndex = field.lastIndexOf('.');
+      if (separatorIndex >= 0) {
+        const path = field.substring(0, separatorIndex);
+        if (populateByPath[path]) {
+          const select = field.substring(separatorIndex + 1, field.length);
+          populateByPath[path].select.push(select);
+        }
+      } else {
+        select.push(field);
+      }
+    });
+  }
+  return {populate: _.toArray(populateByPath), select};
 };

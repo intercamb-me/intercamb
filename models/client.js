@@ -6,16 +6,6 @@ const DateOnly = require('mongoose-dateonly')(mongoose);
 const {Schema} = mongoose;
 const {ObjectId} = Schema.Types;
 
-const Address = new Schema({
-  public_place: {type: String},
-  number: {type: Number},
-  complement: {type: String},
-  neighborhood: {type: String},
-  city: {type: String},
-  state: {type: String},
-  zip_code: {type: String},
-}, {_id: false});
-
 const PlaceOfBirth = new Schema({
   city: {type: String},
   state: {type: String},
@@ -36,6 +26,16 @@ const PersonalData = new Schema({
   birthdate: {type: DateOnly},
   gender: {type: String},
   marital_status: {type: String},
+}, {_id: false});
+
+const Address = new Schema({
+  public_place: {type: String},
+  number: {type: Number},
+  complement: {type: String},
+  neighborhood: {type: String},
+  city: {type: String},
+  state: {type: String},
+  zip_code: {type: String},
 }, {_id: false});
 
 const FamilyMemberData = new Schema({
@@ -79,7 +79,7 @@ const AcademicData = new Schema({
 
 const IntendedCourse = new Schema({
   name: {type: String},
-  institution: {type: String},
+  institution: {type: ObjectId, ref: 'Institution'},
   preferred_shift: {type: String},
   alternative_shift: {type: String},
 }, {_id: false});
@@ -100,8 +100,8 @@ const Client = new Schema({
   photo_url: {type: String},
   needs_revision: {type: Boolean},
   registration_date: {type: Date, required: true},
-  address: {type: Address},
   personal_data: {type: PersonalData},
+  address: {type: Address},
   family_data: {type: FamilyData},
   in_case_of_emergency: {type: InCaseOfEmergency},
   academic_data: {type: AcademicData},

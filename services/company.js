@@ -14,7 +14,7 @@ const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const DEFAULT_CURRENCY = 'BRL';
-const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color', 'available_institutions'];
+const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color', 'institutions'];
 
 exports.listAllInstitutions = async () => {
   const institutions = await institutionQueries.findInstitutions();
@@ -42,9 +42,9 @@ exports.createCompany = async (account, name) => {
 
 exports.updateCompany = async (company, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
-  if (attrs.available_institutions) {
-    const institutionsSet = new Set(attrs.available_institutions);
-    attrs.available_institutions = [...institutionsSet];
+  if (attrs.institutions) {
+    const institutionsSet = new Set(attrs.institutions);
+    attrs.institutions = [...institutionsSet];
   }
   const loadedCompany = await companyQueries.getCompany(company.id);
   loadedCompany.set(attrs);

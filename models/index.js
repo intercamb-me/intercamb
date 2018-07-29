@@ -71,7 +71,7 @@ const Company = new Schema({
   primary_color: {type: String},
   text_color: {type: String},
   registration_date: {type: Date, required: true},
-  available_institutions: [{type: ObjectId, ref: 'Institution'}],
+  institutions: [{type: ObjectId, ref: 'Institution'}],
 }, {collection: 'companies'});
 Company.virtual('accounts', {
   ref: 'Account',
