@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 exports.getOptions = (req) => {
   const populateByPath = {};
-  const select = [];
+  const selection = [];
   if (req.query.populate) {
     const fields = req.query.populate.split(' ');
     _.forEach(fields, (field) => {
@@ -22,9 +22,12 @@ exports.getOptions = (req) => {
           populateByPath[path].select.push(select);
         }
       } else {
-        select.push(field);
+        selection.push(field);
       }
     });
   }
-  return {populate: _.toArray(populateByPath), select};
+  return {
+    select: selection,
+    populate: _.toArray(populateByPath),
+  };
 };
