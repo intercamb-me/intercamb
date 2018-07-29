@@ -169,7 +169,7 @@ async function getBillingPerMonthReport(req, res) {
 }
 
 module.exports = (router, app) => {
-  router.post('/institutions', accountAuthenticated, listAllInstitutions);
+  router.get('/institutions', accountAuthenticated, listAllInstitutions);
   router.post('', accountAuthenticated, createCompany);
   router.get('/current', accountAuthenticated, getCompany);
   router.put('/current', accountAuthenticated, updateCompany);

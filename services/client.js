@@ -2,7 +2,7 @@
 
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
-const paymentOrderQueries = require('database/queries/paymentOrder');
+const paymentOrderQueries = require('database/queries/payment_order');
 const brazilianStates = require('resources/brazilian_states');
 const errors = require('utils/errors');
 const {Client, Task, PaymentOrder} = require('models');
@@ -161,7 +161,7 @@ exports.dissociatePlan = async (client) => {
 exports.registerPaymentOrders = async (client, paymentOrders) => {
   const loadedClient = await clientQueries.getClient(client.id);
   const orders = [];
-  paymentOrders.forEach((paymentOrder) => {
+  _.forEach(paymentOrders, (paymentOrder) => {
     const order = new PaymentOrder({
       client: loadedClient.id,
       company: loadedClient.company,

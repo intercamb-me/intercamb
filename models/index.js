@@ -2,8 +2,8 @@
 
 const settings = require('configs/settings');
 const logger = require('utils/logger');
-const {Client} = require('models/Client');
-const {Task, TaskComment, TaskAttachment} = require('models/Task');
+const {Client} = require('models/client');
+const {Task, TaskComment, TaskAttachment} = require('models/task');
 const mongoose = require('mongoose');
 const DateOnly = require('mongoose-dateonly')(mongoose);
 const Promise = require('bluebird');
@@ -71,7 +71,7 @@ const Company = new Schema({
   primary_color: {type: String},
   text_color: {type: String},
   registration_date: {type: Date, required: true},
-  available_institutions: {type: [String]},
+  available_institutions: [{type: ObjectId, ref: 'Institution'}],
 }, {collection: 'companies'});
 Company.virtual('accounts', {
   ref: 'Account',
@@ -88,6 +88,12 @@ Company.virtual('tokens', {
   localField: '_id',
   foreignField: 'company',
 });
+
+const Institution = new Schema({
+  country: {type: String, required: true},
+  name: {type: String, required: true, unique: true},
+  acronym: {type: String},
+}, {collection: 'institutions'});
 
 const PaymentOrder = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
@@ -120,6 +126,7 @@ exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) =
 }));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Company = mongoose.model('Company', normalizeSchema(Company));
+exports.Institution = mongoose.model('Institution', normalizeSchema(Institution));
 exports.PaymentOrder = mongoose.model('PaymentOrder', normalizeSchema(PaymentOrder));
 exports.Plan = mongoose.model('Plan', normalizeSchema(Plan));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));

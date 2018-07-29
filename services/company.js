@@ -2,10 +2,10 @@
 
 const accountQueries = require('database/queries/account');
 const companyQueries = require('database/queries/company');
+const institutionQueries = require('database/queries/institution');
 const planQueries = require('database/queries/plan');
 const clientQueries = require('database/queries/client');
 const taskQueries = require('database/queries/task');
-const institutions = require('resources/institutions');
 const files = require('utils/files');
 const {Company, Client, PaymentOrder} = require('models');
 const DateOnly = require('dateonly');
@@ -14,10 +14,13 @@ const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
 const DEFAULT_CURRENCY = 'BRL';
-const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color'];
+const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color', 'available_institutions'];
 
 exports.listAllInstitutions = async () => {
-  return _.cloneDeep(institutions);
+  const institutions = await institutionQueries.findInstitutions();
+  return _.sortBy(institutions, (institution) => {
+    return institution.name.toLowerCase();
+  });
 };
 
 exports.getCompany = async (id, options) => {
@@ -39,6 +42,10 @@ exports.createCompany = async (account, name) => {
 
 exports.updateCompany = async (company, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
+  if (attrs.available_institutions) {
+    const institutionsSet = new Set(attrs.available_institutions);
+    attrs.available_institutions = [...institutionsSet];
+  }
   const loadedCompany = await companyQueries.getCompany(company.id);
   loadedCompany.set(attrs);
   return loadedCompany.save();

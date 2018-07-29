@@ -1,0 +1,346 @@
+[
+  {
+    "country": "AR",
+    "name": "Universidade de Buenos Aires",
+    "acronym": "UBA"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Tecnológica Nacional",
+    "acronym": "UTN"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Catamarca",
+    "acronym": "UNCa"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Chilecito",
+    "acronym": "UNdeC"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Córdoba",
+    "acronym": "UNC"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Cuyo",
+    "acronym": "UNCUYO"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Entre Ríos",
+    "acronym": "UNER"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Formosa",
+    "acronym": "UNaF"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de San Martín",
+    "acronym": "UNSAM"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de General Sarmiento",
+    "acronym": "UNGS"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Jujuy",
+    "acronym": "UNJu"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de La Matanza",
+    "acronym": "UNLaM"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de La Pampa"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional da Patagonia Austral"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional da Patagonia San Juan Bosco"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de La Plata"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de La Rioja"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Lanús"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Lomas de Zamora"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Luján"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Mar del Plata"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Misiones"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Quilmes"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Río Cuarto"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Río Negro"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Rosário"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Salta"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de San Juan"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de San Luis"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Santiago del Estero"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Tres de Febrero"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Tucumán"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional de Villa María"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional do Centro da Provincia de Buenos Aires"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional do Comahue"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional do Litoral"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional do Nordeste"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional do Noroeste de la Provincia de Buenos Aires"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Nacional do Sul"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Aberta Interamericana"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Aconcagua"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Adventista del Plata"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Atlántida Argentina"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Austral"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Belgrano"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Caece"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de CEMA"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica de La Plata"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica Argentina"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade do Norte Santo Tomás de Aquino"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica de Córdoba"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica de Salta"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Ciencias Empresariais y Sociais"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Cine"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Concepción del Uruguay"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade da Cuenca del Plata"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Torcuato Di Tella"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Argentina da Empresa"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Favaloro"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Flores"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Argentina John F. Kennedy"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Popular de Madres de Plaza de Mayo"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Mendoza"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Morón"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Palermo"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Salvador"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de San Andrés"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Blas Pascal"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica de Cuyo"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica de Santa Fe"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Católica de Santiago del Estero"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Champagnat"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de Congresso"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade de San Pablo-Tucumán"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade da Fraternidade de Agrupamentos Santo Tomás de Aquino"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade da Marina Mercante"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade do Centro Educativo Latinoamericano"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade do Museu Social Argentino"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Empresarial Siglo 21"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade ISALUD"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Juan Agustín Maza"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Maimónides"
+  },
+  {
+    "country": "AR",
+    "name": "Universidade Notarial Argentina"
+  }
+]
