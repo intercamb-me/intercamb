@@ -21,10 +21,10 @@ exports.uploadsPath = path.join(this.publicPath, 'uploads');
 exports.mediaUrl = `${this.publicUrl}/media`;
 exports.mediaPath = path.join(this.publicPath, 'media');
 
-exports.publicS3Bucket = 'intercambio-public';
+exports.publicS3Bucket = 'intercamb-public';
 exports.publicCDNUrl = 'https://public.intercamb.me';
 
-exports.mediaS3Bucket = 'intercambio-media';
+exports.mediaS3Bucket = 'intercamb-media';
 exports.mediaCDNUrl = 'https://media.intercamb.me';
 
 exports.session = {
@@ -38,7 +38,7 @@ exports.mongo = {
   host: _.get(config, 'mongo.host', 'localhost'),
   port: _.get(config, 'mongo.port', 27017),
   debug: _.get(config, 'mongo.debug', false),
-  schema: _.get(config, 'mongo.schema', 'intercambio'),
+  schema: _.get(config, 'mongo.schema', 'intercamb'),
   username: _.get(config, 'mongo.username'),
   password: _.get(config, 'mongo.password'),
 };

@@ -21,7 +21,7 @@ if (require.main === module) {
       region: 'us-west-1',
       repository: {
         url: '554511234717.dkr.ecr.us-west-1.amazonaws.com',
-        namespace: 'intercambio',
+        namespace: 'intercamb',
       },
     },
   });

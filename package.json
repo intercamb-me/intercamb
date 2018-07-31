@@ -1,11 +1,11 @@
 {
-  "name": "intercambio",
-  "description": "Intercambio Backend",
+  "name": "intercamb",
+  "description": "Intercamb.me Backend",
   "version": "0.0.8",
   "private": true,
   "homepage": "https://intercamb.me",
   "author": {
-    "name": "Intercambio team",
+    "name": "Intercamb.me team",
     "email": "team@intercamb.me",
     "url": "https://intercamb.me"
   },

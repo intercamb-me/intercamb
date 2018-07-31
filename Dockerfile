@@ -1,5 +1,5 @@
 FROM keymetrics/pm2:8-alpine
-WORKDIR /usr/src/intercambio
+WORKDIR /usr/src/intercamb
 COPY ./package*.json ./
 RUN \
   echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
