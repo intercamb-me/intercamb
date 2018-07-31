@@ -1,12 +1,12 @@
 'use strict';
 
-const tokenQueries = require('database/queries/token');
+const queries = require('database/queries');
 const errors = require('utils/errors');
 const {Token} = require('models');
 const dateFns = require('date-fns');
 
 exports.getToken = async (id) => {
-  const token = await tokenQueries.findToken((query) => {
+  const token = await queries.find(Token, (query) => {
     query.where('_id', id);
     query.populate({
       path: 'company',

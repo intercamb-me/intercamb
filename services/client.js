@@ -1,9 +1,7 @@
 'use strict';
 
-const clientQueries = require('database/queries/client');
-const taskQueries = require('database/queries/task');
-const paymentOrderQueries = require('database/queries/payment_order');
-const brazilianStates = require('resources/brazilian_states');
+const queries = require('database/queries');
+const brazilianStates = require('resources/brazilianStates');
 const errors = require('utils/errors');
 const {Client, Task, PaymentOrder} = require('models');
 const cepPromise = require('cep-promise');
@@ -20,6 +18,10 @@ async function createTasks(company, client) {
     name: 'Contrato',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const identityCard = new Task({
@@ -28,6 +30,10 @@ async function createTasks(company, client) {
     name: 'Identidade',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const passport = new Task({
@@ -36,6 +42,10 @@ async function createTasks(company, client) {
     name: 'Passaporte',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const birthCertificate = new Task({
@@ -44,6 +54,10 @@ async function createTasks(company, client) {
     name: 'Certidão de nascimento',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const highSchoolCertificate = new Task({
@@ -52,6 +66,10 @@ async function createTasks(company, client) {
     name: 'Certificado de ensino médio',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const highSchoolHistoric = new Task({
@@ -60,6 +78,10 @@ async function createTasks(company, client) {
     name: 'Histórico do ensino médio',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const courseEnrolment = new Task({
@@ -68,6 +90,10 @@ async function createTasks(company, client) {
     name: 'Inscrição no curso',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const nativeCriminalRecords = new Task({
@@ -76,6 +102,10 @@ async function createTasks(company, client) {
     name: 'Antecedentes criminais',
     status: 'pending',
     schedulable: false,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const foreignCriminalRecords = new Task({
@@ -84,6 +114,10 @@ async function createTasks(company, client) {
     name: 'Antecedentes criminais (Argentina)',
     status: 'pending',
     schedulable: true,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const foreignIdentity = new Task({
@@ -92,6 +126,10 @@ async function createTasks(company, client) {
     name: 'Identidade (Argentina)',
     status: 'pending',
     schedulable: true,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   const reception = new Task({
@@ -100,6 +138,10 @@ async function createTasks(company, client) {
     name: 'Recepção',
     status: 'pending',
     schedulable: true,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
     registration_date: now,
   });
   return Task.insertMany([
@@ -118,7 +160,7 @@ async function createTasks(company, client) {
 }
 
 exports.getClient = async (id, options) => {
-  return clientQueries.getClient(id, options);
+  return queries.get(Client, id, options);
 };
 
 exports.createClient = async (company, data) => {
@@ -133,7 +175,7 @@ exports.createClient = async (company, data) => {
 
 exports.updateClient = async (client, data) => {
   const attrs = _.omit(data, UNALLOWED_CLIENT_ATTRS);
-  const loadedClient = await clientQueries.getClient(client.id);
+  const loadedClient = await queries.get(Client, client.id);
   loadedClient.set(attrs);
   return loadedClient.save();
 };
@@ -143,23 +185,23 @@ exports.removeClient = async () => {
 };
 
 exports.listTasks = async (client, options) => {
-  return taskQueries.findTasks({client: client.id}, options);
+  return queries.list(Task, {client: client.id}, options);
 };
 
 exports.associatePlan = async (client, plan) => {
-  const loadedClient = await clientQueries.getClient(client.id);
+  const loadedClient = await queries.get(Client, client.id);
   loadedClient.plan = plan.id;
   return loadedClient.save();
 };
 
 exports.dissociatePlan = async (client) => {
-  const loadedClient = await clientQueries.getClient(client.id);
+  const loadedClient = await queries.get(Client, client.id);
   loadedClient.plan = null;
   return loadedClient.save();
 };
 
 exports.registerPaymentOrders = async (client, paymentOrders) => {
-  const loadedClient = await clientQueries.getClient(client.id);
+  const loadedClient = await queries.get(Client, client.id);
   const orders = [];
   _.forEach(paymentOrders, (paymentOrder) => {
     const order = new PaymentOrder({
@@ -176,7 +218,7 @@ exports.registerPaymentOrders = async (client, paymentOrders) => {
 };
 
 exports.listPaymentOrders = async (client, options) => {
-  return paymentOrderQueries.findPaymentOrders({client: client.id}, options);
+  return queries.list(PaymentOrder, {client: client.id}, options);
 };
 
 exports.searchAddress = async (code) => {

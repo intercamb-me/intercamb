@@ -11,11 +11,11 @@ const logger = require('utils/logger');
 
 exports.configure = (express, app) => {
   logger.info('Configuring routes');
-  accountRoutes(express.Router({mergeParams: true}), app);
-  companyRoutes(express.Router({mergeParams: true}), app);
-  tokenRoutes(express.Router({mergeParams: true}), app);
-  planRoutes(express.Router({mergeParams: true}), app);
-  clientRoutes(express.Router({mergeParams: true}), app);
-  taskRoutes(express.Router({mergeParams: true}), app);
-  paymentRoutes(express.Router({mergeParams: true}), app);
+  accountRoutes(express, app);
+  companyRoutes(express, app);
+  tokenRoutes(express, app);
+  planRoutes(express, app);
+  clientRoutes(express, app);
+  taskRoutes(express, app);
+  paymentRoutes(express, app);
 };

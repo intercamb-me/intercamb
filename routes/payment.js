@@ -38,7 +38,8 @@ async function deletePaymentOrder(req, res) {
   }
 }
 
-module.exports = (router, app) => {
+module.exports = (express, app) => {
+  const router = express.Router({mergeParams: true});
   router.get('/:payment_order', [accountAuthenticated, paymentOrderBelongsToCompany], getPaymentOrder);
   router.put('/:payment_order', [accountAuthenticated, paymentOrderBelongsToCompany], updatePaymentOrder);
   router.delete('/:payment_order', [accountAuthenticated, paymentOrderBelongsToCompany], deletePaymentOrder);

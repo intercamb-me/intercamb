@@ -82,7 +82,8 @@ async function logout(req, res) {
   }
 }
 
-module.exports = (router, app) => {
+module.exports = (express, app) => {
+  const router = express.Router({mergeParams: true});
   router.post('', createAccount);
   router.get('/current', getAccount);
   router.put('/current', accountAuthenticated, updateAccount);

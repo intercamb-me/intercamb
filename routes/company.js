@@ -94,13 +94,24 @@ async function listClients(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: '_id'});
-    const options = {select: req.query.select};
     let clients;
     if (req.query.search) {
-      clients = await companyService.searchClients(company, req.query.search, options);
+      clients = await companyService.searchClients(company, req.query.search, helpers.getOptions(req));
     } else {
-      clients = await companyService.listClients(company, req.query.id, options);
+      clients = await companyService.listClients(company, req.query.id, helpers.getOptions(req));
     }
+    res.json(clients);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listClientsToReview(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const clients = await companyService.listClientsToReview(company, helpers.getOptions(req));
     res.json(clients);
   } catch (err) {
     logger.error(err);
@@ -120,12 +131,24 @@ async function countClients(req, res) {
   }
 }
 
-async function listTasks(req, res) {
+async function listScheduledTasks(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: '_id'});
-    const tasks = await companyService.listTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)), helpers.getOptions(req));
+    const tasks = await companyService.listScheduledTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)), helpers.getOptions(req));
     res.json(tasks);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listNextPendingPaymentOrders(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const paymentOrders = await companyService.listNextPendingPaymentOrders(company, helpers.getOptions(req));
+    res.json(paymentOrders);
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
@@ -168,7 +191,8 @@ async function getBillingPerMonthReport(req, res) {
   }
 }
 
-module.exports = (router, app) => {
+module.exports = (express, app) => {
+  const router = express.Router({mergeParams: true});
   router.get('/institutions', accountAuthenticated, listAllInstitutions);
   router.post('', accountAuthenticated, createCompany);
   router.get('/current', accountAuthenticated, getCompany);
@@ -177,8 +201,10 @@ module.exports = (router, app) => {
   router.get('/current/accounts', accountAuthenticated, listAccounts);
   router.get('/current/plans', accountAuthenticated, listPlans);
   router.get('/current/clients', accountAuthenticated, listClients);
+  router.get('/current/clients/review', accountAuthenticated, listClientsToReview);
   router.get('/current/clients/count', accountAuthenticated, countClients);
-  router.get('/current/tasks', accountAuthenticated, listTasks);
+  router.get('/current/tasks/scheduled', accountAuthenticated, listScheduledTasks);
+  router.get('/current/payment_orders/pending', accountAuthenticated, listNextPendingPaymentOrders);
   router.get('/current/reports/clients_per_month', accountAuthenticated, getClientsPerMonthReport);
   router.get('/current/reports/clients_per_plan', accountAuthenticated, getClientsPerPlanReport);
   router.get('/current/reports/billing_per_month', accountAuthenticated, getBillingPerMonthReport);

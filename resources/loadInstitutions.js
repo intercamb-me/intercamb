@@ -4,8 +4,8 @@ const path = require('path');
 
 require('app-module-path').addPath(path.resolve());
 
-const institutionQueries = require('database/queries/institution');
-const institutionsArgentina = require('resources/institutions_ar');
+const queries = require('database/queries');
+const institutionsArgentina = require('resources/institutionsAR');
 const {Institution} = require('models');
 const _ = require('lodash');
 
@@ -17,7 +17,7 @@ function contains(institutions, institution) {
 }
 
 async function exec() {
-  const institutions = await institutionQueries.findInstitutions();
+  const institutions = await queries.list(Institution);
   const institutionsToSave = [];
   _.forEach(institutionsArgentina, async (institution) => {
     if (!contains(institutions, institution)) {

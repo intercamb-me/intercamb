@@ -1,13 +1,13 @@
 'use strict';
 
-const planQueries = require('database/queries/plan');
+const queries = require('database/queries');
 const {Plan, Client} = require('models');
 const _ = require('lodash');
 
 const ALLOWED_ATTRS = ['name', 'price'];
 
 exports.getPlan = async (id, options) => {
-  return planQueries.getPlan(id, options);
+  return queries.get(Plan, id, options);
 };
 
 exports.createPlan = async (company, data) => {
@@ -22,13 +22,13 @@ exports.createPlan = async (company, data) => {
 
 exports.updatePlan = async (plan, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
-  const loadedPlan = await planQueries.getPlan(plan.id);
+  const loadedPlan = await queries.get(Plan, plan.id);
   loadedPlan.set(attrs);
   return loadedPlan.save();
 };
 
 exports.deletePlan = async (plan) => {
   await Client.update({plan: plan.id}, {plan: null});
-  const loadedPlan = await planQueries.getPlan(plan.id);
+  const loadedPlan = await queries.get(Plan, plan.id);
   await loadedPlan.remove();
 };

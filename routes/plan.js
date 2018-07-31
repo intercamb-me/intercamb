@@ -52,7 +52,8 @@ async function deletePlan(req, res) {
   }
 }
 
-module.exports = (router, app) => {
+module.exports = (express, app) => {
+  const router = express.Router({mergeParams: true});
   router.post('', accountAuthenticated, createPlan);
   router.get('/:plan', [accountAuthenticated, planBelongsToCompany], getPlan);
   router.put('/:plan', [accountAuthenticated, planBelongsToCompany], updatePlan);

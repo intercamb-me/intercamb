@@ -132,7 +132,8 @@ async function searchAddress(req, res) {
   }
 }
 
-module.exports = (router, app) => {
+module.exports = (express, app) => {
+  const router = express.Router({mergeParams: true});
   router.post('/', createClient);
   router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);

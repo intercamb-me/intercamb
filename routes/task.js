@@ -1,7 +1,7 @@
 'use strict';
 
 const settings = require('configs/settings');
-const {accountAuthenticated, taskBelongsToCompany} = require('routes/middlewares');
+const {accountAuthenticated, taskBelongsToCompany, attachmentBelongsToCompany} = require('routes/middlewares');
 const helpers = require('routes/helpers');
 const taskService = require('services/task');
 const errors = require('utils/errors');
@@ -63,9 +63,10 @@ async function addTaskAttachment(req, res) {
 async function getTaskAttachmentFile(req, res) {
   try {
     const task = new Task({id: req.params.task});
-    const attachment = await taskService.getTaskAttachment(task, req.params.attachment);
-    const attachmentBuffer = await taskService.getTaskAttachmentBuffer(task, req.params.attachment);
+    const attachment = await taskService.getTaskAttachment(req.params.attachment);
+    const attachmentBuffer = await taskService.getTaskAttachmentBuffer(req.params.attachment);
     res.set({
+      'Content-Disposition': `filename=${attachment.name}`,
       'Content-Type': attachment.type,
       'Content-Length': attachment.size,
     });
@@ -76,11 +77,15 @@ async function getTaskAttachmentFile(req, res) {
   }
 }
 
-module.exports = (router, app) => {
-  router.get('/:task', [accountAuthenticated, taskBelongsToCompany], getTask);
-  router.put('/:task', [accountAuthenticated, taskBelongsToCompany], updateTask);
-  router.post('/:task/comments', [accountAuthenticated, taskBelongsToCompany], addTaskComment);
-  router.post('/:task/attachments', [accountAuthenticated, taskBelongsToCompany, upload.single('file')], addTaskAttachment);
-  router.get('/:task/attachments/:attachment/file', [accountAuthenticated, taskBelongsToCompany], getTaskAttachmentFile);
-  app.use('/tasks', router);
+module.exports = (express, app) => {
+  const tasksRouter = express.Router({mergeParams: true});
+  tasksRouter.get('/:task', [accountAuthenticated, taskBelongsToCompany], getTask);
+  tasksRouter.put('/:task', [accountAuthenticated, taskBelongsToCompany], updateTask);
+  tasksRouter.post('/:task/comments', [accountAuthenticated, taskBelongsToCompany], addTaskComment);
+  tasksRouter.post('/:task/attachments', [accountAuthenticated, taskBelongsToCompany, upload.single('file')], addTaskAttachment);
+  app.use('/tasks', tasksRouter);
+
+  const attachmentsRouter = express.Router({mergeParams: true});
+  attachmentsRouter.get('/:attachment/file', [accountAuthenticated, attachmentBelongsToCompany], getTaskAttachmentFile);
+  app.use('/attachments', attachmentsRouter);
 };

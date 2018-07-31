@@ -64,12 +64,13 @@ exports.taskBelongsToCompany = async (req, res, next) => {
   }
 };
 
-exports.planBelongsToCompany = async (req, res, next) => {
+exports.attachmentBelongsToCompany = async (req, res, next) => {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const plan = await planService.getPlan(req.params.plan, {select: 'company'});
-    if (plan.company.toString() !== account.company.toString()) {
-      errors.respondWithError(res, errors.notFoundError('plan_not_found', 'Plan not found'));
+    const attachment = await taskService.getTaskAttachment(req.params.attachment, {select: 'task'});
+    const task = await taskService.getTask(attachment.task, {select: 'company'});
+    if (task.company.toString() !== account.company.toString()) {
+      errors.respondWithError(res, errors.notFoundError('task_attachment_not_found', 'Task attachment not found'));
       return;
     }
     next();
@@ -85,6 +86,21 @@ exports.paymentOrderBelongsToCompany = async (req, res, next) => {
     const paymentOrder = await paymentService.getPaymentOrder(req.params.payment_order, {select: 'company'});
     if (paymentOrder.company.toString() !== account.company.toString()) {
       errors.respondWithError(res, errors.notFoundError('payment_order_not_found', 'Payment order not found'));
+      return;
+    }
+    next();
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+};
+
+exports.planBelongsToCompany = async (req, res, next) => {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const plan = await planService.getPlan(req.params.plan, {select: 'company'});
+    if (plan.company.toString() !== account.company.toString()) {
+      errors.respondWithError(res, errors.notFoundError('plan_not_found', 'Plan not found'));
       return;
     }
     next();

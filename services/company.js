@@ -1,13 +1,8 @@
 'use strict';
 
-const accountQueries = require('database/queries/account');
-const companyQueries = require('database/queries/company');
-const institutionQueries = require('database/queries/institution');
-const planQueries = require('database/queries/plan');
-const clientQueries = require('database/queries/client');
-const taskQueries = require('database/queries/task');
+const queries = require('database/queries');
 const files = require('utils/files');
-const {Company, Client, PaymentOrder} = require('models');
+const {Account, Company, Client, PaymentOrder, Plan, Task} = require('models');
 const DateOnly = require('dateonly');
 const dateFns = require('date-fns');
 const _ = require('lodash');
@@ -17,14 +12,14 @@ const DEFAULT_CURRENCY = 'BRL';
 const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color', 'institutions'];
 
 exports.listAllInstitutions = async () => {
-  const institutions = await institutionQueries.findInstitutions();
+  const institutions = await queries.list(Institution);
   return _.sortBy(institutions, (institution) => {
     return institution.name.toLowerCase();
   });
 };
 
 exports.getCompany = async (id, options) => {
-  return companyQueries.getCompany(id, options);
+  return queries.get(Company, id, options);
 };
 
 exports.createCompany = async (account, name) => {
@@ -46,28 +41,28 @@ exports.updateCompany = async (company, data) => {
     const institutionsSet = new Set(attrs.institutions);
     attrs.institutions = [...institutionsSet];
   }
-  const loadedCompany = await companyQueries.getCompany(company.id);
+  const loadedCompany = await queries.get(Company, company.id);
   loadedCompany.set(attrs);
   return loadedCompany.save();
 };
 
 exports.updateCompanyLogo = async (company, logoFile) => {
-  const loadedCompany = await companyQueries.getCompany(company.id);
+  const loadedCompany = await queries.get(Company, company.id);
   const logoUrl = await files.uploadCompanyLogo(loadedCompany, logoFile.path);
   loadedCompany.logo_url = logoUrl;
   return loadedCompany.save();
 };
 
 exports.listAccounts = async (company, options) => {
-  return accountQueries.findAccounts({company: company.id}, options);
+  return queries.list(Account, {company: company.id}, options);
 };
 
 exports.listPlans = async (company, options) => {
-  return planQueries.findPlans({company: company.id}, options);
+  return queries.list(Plan, {company: company.id}, options);
 };
 
 exports.listClients = async (company, ids, options) => {
-  return clientQueries.findClients((query) => {
+  return queries.list(Client, (query) => {
     query.where('company').equals(company.id);
     if (ids) {
       query.where('_id').in(ids);
@@ -76,9 +71,17 @@ exports.listClients = async (company, ids, options) => {
   }, options);
 };
 
+exports.listClientsToReview = async (company, ids, options) => {
+  return queries.list(Client, (query) => {
+    query.where('company').equals(company.id);
+    query.where('needs_revision').equals(true);
+    query.sort('-registration_date');
+  }, options);
+};
+
 exports.searchClients = async (company, search, options) => {
   const regexp = new RegExp(search, 'i');
-  return clientQueries.findClients((query) => {
+  return queries.list(Client, (query) => {
     query.where('company').equals(company.id);
     query.or([
       {forename: regexp},
@@ -94,13 +97,28 @@ exports.countClients = async (company) => {
   return Client.countDocuments({company: company.id});
 };
 
-exports.listTasks = async (company, startDate, endDate, options) => {
-  return taskQueries.findTasks((query) => {
+exports.listScheduledTasks = async (company, startDate, endDate, options) => {
+  return queries.list(Task, (query) => {
     query.where('company').equals(company.id);
     query.where('status').equals('pending');
     query.where('schedule_date').gte(startDate).lte(endDate);
     query.sort('schedule_date');
     query.sort('name');
+  }, options);
+};
+
+exports.listNextPendingPaymentOrders = async (company, options) => {
+  let today = new Date();
+  today = dateFns.startOfDay(today);
+  return queries.list(PaymentOrder, (query) => {
+    query.where('company').equals(company.id);
+    query.or([
+      {payment_date: {$exists: false}},
+      {payment_date: {$eq: null}}
+    ]);
+    query.where('due_date').exists(true);
+    query.where('due_date').ne(null);
+    query.sort('due_date');
   }, options);
 };
 

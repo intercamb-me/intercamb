@@ -29,7 +29,8 @@ async function getToken(req, res) {
   }
 }
 
-module.exports = (router, app) => {
+module.exports = (express, app) => {
+  const router = express.Router({mergeParams: true});
   router.post('/', accountAuthenticated, createToken);
   router.get('/:token', getToken);
   app.use('/tokens', router);
