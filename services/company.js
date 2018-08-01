@@ -7,7 +7,7 @@ const DateOnly = require('dateonly');
 const dateFns = require('date-fns');
 const _ = require('lodash');
 
-const DEFAULT_LOGO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
+const DEFAULT_LOGO_URL = 'https://cdn.intercamb.me/images/company_default_logo.png';
 const DEFAULT_CURRENCY = 'BRL';
 const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color', 'institutions'];
 
