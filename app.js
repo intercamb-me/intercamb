@@ -41,5 +41,5 @@ logger.info(`Debug mode is ${settings.debug ? 'ON' : 'OFF'}`);
 routes.configure(express, app);
 
 app.listen(app.get('port'), () => {
-  logger.info(`Intercambio Backend server is listening on port ${app.get('port')}`);
+  logger.info(`Intercamb.me Backend server is listening on port ${app.get('port')}`);
 });
