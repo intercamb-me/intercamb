@@ -107,15 +107,30 @@ exports.listScheduledTasks = async (company, startDate, endDate, options) => {
   }, options);
 };
 
-exports.listNextPendingPaymentOrders = async (company, options) => {
+exports.listPendingPaymentOrders = async (company, options) => {
+  let today = new Date();
+  today = dateFns.startOfDay(today);
   return queries.list(PaymentOrder, (query) => {
     query.where('company').equals(company.id);
     query.or([
       {payment_date: {$exists: false}},
       {payment_date: {$eq: null}},
     ]);
-    query.where('due_date').exists(true);
-    query.where('due_date').ne(null);
+    query.where('due_date').gte(today);
+    query.sort('due_date');
+  }, options);
+};
+
+exports.listOverduePaymentOrders = async (company, options) => {
+  let today = new Date();
+  today = dateFns.startOfDay(today);
+  return queries.list(PaymentOrder, (query) => {
+    query.where('company').equals(company.id);
+    query.or([
+      {payment_date: {$exists: false}},
+      {payment_date: {$eq: null}},
+    ]);
+    query.where('due_date').lt(today);
     query.sort('due_date');
   }, options);
 };

@@ -143,11 +143,23 @@ async function listScheduledTasks(req, res) {
   }
 }
 
-async function listNextPendingPaymentOrders(req, res) {
+async function listPendingPaymentOrders(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = await companyService.getCompany(account.company, {select: '_id'});
-    const paymentOrders = await companyService.listNextPendingPaymentOrders(company, helpers.getOptions(req));
+    const paymentOrders = await companyService.listPendingPaymentOrders(company, helpers.getOptions(req));
+    res.json(paymentOrders);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listOverduePaymentOrders(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const paymentOrders = await companyService.listOverduePaymentOrders(company, helpers.getOptions(req));
     res.json(paymentOrders);
   } catch (err) {
     logger.error(err);
@@ -204,7 +216,8 @@ module.exports = (express, app) => {
   router.get('/current/clients/review', accountAuthenticated, listClientsToReview);
   router.get('/current/clients/count', accountAuthenticated, countClients);
   router.get('/current/tasks/scheduled', accountAuthenticated, listScheduledTasks);
-  router.get('/current/payment_orders/pending', accountAuthenticated, listNextPendingPaymentOrders);
+  router.get('/current/payment_orders/pending', accountAuthenticated, listPendingPaymentOrders);
+  router.get('/current/payment_orders/overdue', accountAuthenticated, listOverduePaymentOrders);
   router.get('/current/reports/clients_per_month', accountAuthenticated, getClientsPerMonthReport);
   router.get('/current/reports/clients_per_plan', accountAuthenticated, getClientsPerPlanReport);
   router.get('/current/reports/billing_per_month', accountAuthenticated, getBillingPerMonthReport);
