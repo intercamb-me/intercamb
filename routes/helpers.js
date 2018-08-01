@@ -7,14 +7,14 @@ function fillPopulate(populate, populateStr) {
     return;
   }
   const populateTrees = [];
-  _.forEach(populateStr.split(' '), function(populatePath) {
+  _.forEach(populateStr.split(' '), (populatePath) => {
     const populateTree = {};
     let currentPath = null;
     _.forEach(populatePath.split('.'), (field) => {
       currentPath = currentPath ? `${currentPath}.populate[${field}]` : field;
       _.set(populateTree, currentPath, {path: field.replace(/>/g, '.'), select: []});
     });
-    populateTrees.push(populateTree)
+    populateTrees.push(populateTree);
   });
   _.merge(populate, ...populateTrees);
 }

@@ -2,7 +2,7 @@
 
 const queries = require('database/queries');
 const files = require('utils/files');
-const {Account, Company, Client, PaymentOrder, Plan, Task} = require('models');
+const {Account, Company, Client, Institution, PaymentOrder, Plan, Task} = require('models');
 const DateOnly = require('dateonly');
 const dateFns = require('date-fns');
 const _ = require('lodash');
@@ -108,13 +108,11 @@ exports.listScheduledTasks = async (company, startDate, endDate, options) => {
 };
 
 exports.listNextPendingPaymentOrders = async (company, options) => {
-  let today = new Date();
-  today = dateFns.startOfDay(today);
   return queries.list(PaymentOrder, (query) => {
     query.where('company').equals(company.id);
     query.or([
       {payment_date: {$exists: false}},
-      {payment_date: {$eq: null}}
+      {payment_date: {$eq: null}},
     ]);
     query.where('due_date').exists(true);
     query.where('due_date').ne(null);

@@ -1,50 +1,38 @@
 'use strict';
 
-const {
-  Account,
-  Client,
-  Company,
-  Institution,
-  PaymentOrder,
-  Plan,
-  Task,
-  TaskAttachment,
-  TaskComment,
-  Token,
-} = require('models');
 const errors = require('utils/errors');
 const _ = require('lodash');
 
 const MODELS = {
   Account: {
-    notFoundError: errors.notFoundError('account_not_found', 'Account not found'),
+    notFoundError: () => errors.notFoundError('account_not_found', 'Account not found'),
   },
   Client: {
-    notFoundError: errors.notFoundError('client_not_found', 'Client not found'),
+    notFoundError: () => errors.notFoundError('client_not_found', 'Client not found'),
   },
   Company: {
-    notFoundError: errors.notFoundError('company_not_found', 'Company not found'),
+    notFoundError: () => errors.notFoundError('company_not_found', 'Company not found'),
   },
   Institution: {
-    notFoundError: errors.notFoundError('institution_not_found', 'Institution not found'),
+    notFoundError: () => errors.notFoundError('institution_not_found', 'Institution not found'),
   },
   PaymentOrder: {
-    notFoundError: errors.notFoundError('payment_order_not_found', 'Payment order not found'),
+    notFoundError: () => errors.notFoundError('payment_order_not_found', 'Payment order not found'),
   },
   Plan: {
-    notFoundError: errors.notFoundError('plan_not_found', 'Plan not found'),
+    notFoundError: () => errors.notFoundError('plan_not_found', 'Plan not found'),
   },
   Task: {
-    notFoundError: errors.notFoundError('task_not_found', 'Task not found'),
+    notFoundError: () => errors.notFoundError('task_not_found', 'Task not found'),
   },
   TaskAttachment: {
-    notFoundError: errors.notFoundError('task_attachment_not_found', 'Task attachment not found'),
+    notFoundError: () => errors.notFoundError('task_attachment_not_found', 'Task attachment not found'),
   },
   TaskComment: {
-    notFoundError: errors.notFoundError('task_comment_not_found', 'Task comment not found'),
+    notFoundError: () => errors.notFoundError('task_comment_not_found', 'Task comment not found'),
   },
   Token: {
-    notFoundError: errors.notFoundError('token_not_found', 'Token not found'),
+    notFoundError: () => errors.notFoundError('token_not_found', 'Token not found'),
   },
 };
 
@@ -79,7 +67,7 @@ function fillQuery(query, options) {
 
 function throwNotFoundIfNeeded(model, obj, options) {
   if (!obj && options.require) {
-    throw MODELS[model.modelName].notFoundError;
+    throw MODELS[model.modelName].notFoundError();
   }
 }
 

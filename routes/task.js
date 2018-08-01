@@ -62,7 +62,6 @@ async function addTaskAttachment(req, res) {
 
 async function getTaskAttachmentFile(req, res) {
   try {
-    const task = new Task({id: req.params.task});
     const attachment = await taskService.getTaskAttachment(req.params.attachment);
     const attachmentBuffer = await taskService.getTaskAttachmentBuffer(req.params.attachment);
     res.set({

@@ -2,7 +2,6 @@
 
 const queries = require('database/queries');
 const files = require('utils/files');
-const errors = require('utils/errors');
 const {Task, TaskComment, TaskAttachment} = require('models');
 const _ = require('lodash');
 
