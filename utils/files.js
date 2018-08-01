@@ -39,8 +39,8 @@ async function uploadMedia(sourcePath, file, options, publicMode) {
   let fileUrl = null;
   const relativePath = path.join(file.relativeDir, file.name);
   if (settings.env === constants.environments.PRODUCTION) {
-    const cdnUrl = publicMode ? settings.publicCDNUrl : settings.mediaCDNUrl;
-    const bucket = publicMode ? settings.publicS3Bucket : settings.mediaS3Bucket;
+    const cdnUrl = publicMode ? settings.publicCDNUrl : settings.privateCDNUrl;
+    const bucket = publicMode ? settings.publicS3Bucket : settings.privateS3Bucket;
     const sourceDir = path.dirname(sourcePath);
     const sourceFileName = path.basename(sourcePath);
     const finalPath = path.join(sourceDir, `${sourceFileName}_${Date.now()}`);
@@ -124,7 +124,7 @@ exports.getTaskAttachment = async (task, attachment) => {
   const relativePath = path.join('clients', task.client.toString(), 'tasks', task.id, attachment.file);
   if (settings.env === constants.environments.PRODUCTION) {
     return s3.getObject({
-      Bucket: settings.mediaS3Bucket,
+      Bucket: settings.privateS3Bucket,
       Key: relativePath,
     }).promise();
   }

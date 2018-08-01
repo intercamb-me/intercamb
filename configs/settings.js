@@ -24,8 +24,8 @@ exports.mediaPath = path.join(this.publicPath, 'media');
 exports.publicS3Bucket = 'intercamb-public';
 exports.publicCDNUrl = 'https://public.intercamb.me';
 
-exports.mediaS3Bucket = 'intercamb-media';
-exports.mediaCDNUrl = 'https://media.intercamb.me';
+exports.privateS3Bucket = 'intercamb-private';
+exports.privateCDNUrl = 'https://private.intercamb.me';
 
 exports.session = {
   prefix: 'session:',

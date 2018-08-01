@@ -7,7 +7,7 @@ const cryptography = require('utils/cryptography');
 const {Account} = require('models');
 const _ = require('lodash');
 
-const DEFAULT_IMAGE_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
+const DEFAULT_IMAGE_URL = 'https://cdn.intercamb.me/images/account_default_image.png';
 const ALLOWED_ATTRS = ['first_name', 'last_name', 'email'];
 
 exports.getAccount = async (id, options) => {

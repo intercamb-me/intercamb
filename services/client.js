@@ -7,7 +7,7 @@ const {Client, Task, PaymentOrder} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
-const DEFAULT_PHOTO_URL = 'https://cdn.ayro.io/images/account_default_logo.png';
+const DEFAULT_PHOTO_URL = 'https://cdn.intercamb.me/images/client_default_photo.png';
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
 
 async function createTasks(company, client) {
