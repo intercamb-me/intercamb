@@ -9,7 +9,7 @@ const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.intercamb.me/images/company_default_logo.png';
 const DEFAULT_CURRENCY = 'BRL';
-const ALLOWED_ATTRS = ['name', 'primary_color', 'text_color', 'institutions'];
+const ALLOWED_ATTRS = ['name', 'contact_email', 'contact_phone', 'website', 'primary_color', 'text_color', 'institutions'];
 
 exports.listAllInstitutions = async () => {
   const institutions = await queries.list(Institution);
@@ -22,9 +22,12 @@ exports.getCompany = async (id, options) => {
   return queries.get(Company, id, options);
 };
 
-exports.createCompany = async (account, name) => {
+exports.createCompany = async (account, data) => {
   const company = new Company({
-    name,
+    name: data.name,
+    contact_email: data.contact_email,
+    contact_phone: data.contact_phone,
+    website: data.website,
     owner: account.id,
     logo_url: DEFAULT_LOGO_URL,
     currency: DEFAULT_CURRENCY,

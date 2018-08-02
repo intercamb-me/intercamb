@@ -23,7 +23,7 @@ async function listAllInstitutions(req, res) {
 
 async function createCompany(req, res) {
   try {
-    const company = await companyService.createCompany(req.account, req.body.name);
+    const company = await companyService.createCompany(req.account, req.body);
     res.json(company);
   } catch (err) {
     logger.error(err);

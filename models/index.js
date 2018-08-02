@@ -66,6 +66,9 @@ const Account = new Schema({
 const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
   name: {type: String, required: true},
+  contact_email: {type: String, required: true},
+  contact_phone: {type: String, required: true},
+  website: {type: String},
   logo_url: {type: String},
   currency: {type: String},
   primary_color: {type: String},
