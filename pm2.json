@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "Intercambio Backend",
+      "name": "Intercamb.me Backend",
       "script": "app.js",
       "exec_mode": "cluster",
       "instances": 0

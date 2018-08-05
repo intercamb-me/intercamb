@@ -96,6 +96,18 @@ async function createTasks(company, client) {
     },
     registration_date: now,
   });
+  const reception = new Task({
+    company: company.id,
+    client: client.id,
+    name: 'Recepção',
+    status: 'pending',
+    schedulable: true,
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
+    registration_date: now,
+  });
   const nativeCriminalRecords = new Task({
     company: company.id,
     client: client.id,
@@ -132,18 +144,6 @@ async function createTasks(company, client) {
     },
     registration_date: now,
   });
-  const reception = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Recepção',
-    status: 'pending',
-    schedulable: true,
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
   return Task.insertMany([
     contract,
     identityCard,
@@ -152,10 +152,10 @@ async function createTasks(company, client) {
     highSchoolCertificate,
     highSchoolHistoric,
     courseEnrolment,
+    reception,
     nativeCriminalRecords,
     foreignCriminalRecords,
     foreignIdentity,
-    reception,
   ]);
 }
 
