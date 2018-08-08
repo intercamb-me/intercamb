@@ -14,10 +14,9 @@ async function createClient(req, res) {
     let token;
     let client;
     if (req.query.token) {
-      const data = req.body;
-      data.needs_revision = true;
+      req.body.needs_revision = true;
       token = await tokenService.getToken(req.query.token);
-      client = await clientService.createClient(token.company, data);
+      client = await clientService.createClient(token.company, req.body);
     } else {
       await accountAuthenticated(req, res, () => {});
       const account = await accountService.getAccount(req.account.id, {select: 'company'});

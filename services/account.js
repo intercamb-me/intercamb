@@ -14,20 +14,27 @@ exports.getAccount = async (id, options) => {
   return queries.get(Account, id, options);
 };
 
-exports.createAccount = async (firstName, lastName, email, password) => {
-  const accountWithEmail = await queries.find(Account, {email}, {require: false});
+exports.createAccount = async (data, company) => {
+  if (!data.first_name) throw errors.apiError('account_first_name_required', 'First name required');
+  if (!data.last_name) throw errors.apiError('account_last_name_required', 'Last name required');
+  if (!data.email) throw errors.apiError('account_email_required', 'Email required');
+  if (!data.password) throw errors.apiError('account_password_required', 'Password required');
+  const accountWithEmail = await queries.find(Account, {email: data.email}, {require: false});
   if (accountWithEmail) {
     throw errors.apiError('account_already_exists', 'Account already exists');
   }
-  const hash = await cryptography.hash(password);
+  const hash = await cryptography.hash(data.password);
   const account = new Account({
-    email,
-    first_name: firstName,
-    last_name: lastName,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    email: data.email,
     password: hash,
     image_url: DEFAULT_IMAGE_URL,
     registration_date: new Date(),
   });
+  if (company) {
+    account.company = company.id;
+  }
   return account.save();
 };
 

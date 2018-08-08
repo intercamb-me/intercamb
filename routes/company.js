@@ -7,6 +7,7 @@ const accountService = require('services/account');
 const companyService = require('services/company');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
+const {Company} = require('models');
 const multer = require('multer');
 
 const upload = multer({dest: settings.uploadsPath});
@@ -45,7 +46,7 @@ async function getCompany(req, res) {
 async function updateCompany(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    let company = await companyService.getCompany(account.company, {select: '_id'});
+    let company = new Company({id: account.company});
     company = await companyService.updateCompany(company, req.body);
     res.json(company);
   } catch (err) {
@@ -57,9 +58,21 @@ async function updateCompany(req, res) {
 async function updateCompanyLogo(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    let company = await companyService.getCompany(account.company, {select: '_id'});
+    let company = new Company({id: account.company});
     company = await companyService.updateCompanyLogo(company, req.file);
     res.json(company);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function invite(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = new Company({id: account.company});
+    await companyService.invite(account, company, req.body.email);
+    res.json({});
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
@@ -69,7 +82,7 @@ async function updateCompanyLogo(req, res) {
 async function listAccounts(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const accounts = await companyService.listAccounts(company);
     res.json(accounts);
   } catch (err) {
@@ -81,7 +94,7 @@ async function listAccounts(req, res) {
 async function listPlans(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const clients = await companyService.listPlans(company);
     res.json(clients);
   } catch (err) {
@@ -93,7 +106,7 @@ async function listPlans(req, res) {
 async function listClients(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     let clients;
     if (req.query.search) {
       clients = await companyService.searchClients(company, req.query.search, helpers.getOptions(req));
@@ -110,7 +123,7 @@ async function listClients(req, res) {
 async function listClientsToReview(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const clients = await companyService.listClientsToReview(company, helpers.getOptions(req));
     res.json(clients);
   } catch (err) {
@@ -122,7 +135,7 @@ async function listClientsToReview(req, res) {
 async function countClients(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const count = await companyService.countClients(company);
     res.json({count});
   } catch (err) {
@@ -134,7 +147,7 @@ async function countClients(req, res) {
 async function listScheduledTasks(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const tasks = await companyService.listScheduledTasks(company, new Date(Number(req.query.start_time)), new Date(Number(req.query.end_time)), helpers.getOptions(req));
     res.json(tasks);
   } catch (err) {
@@ -146,7 +159,7 @@ async function listScheduledTasks(req, res) {
 async function listPendingPaymentOrders(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const paymentOrders = await companyService.listPendingPaymentOrders(company, helpers.getOptions(req));
     res.json(paymentOrders);
   } catch (err) {
@@ -158,7 +171,7 @@ async function listPendingPaymentOrders(req, res) {
 async function listOverduePaymentOrders(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const paymentOrders = await companyService.listOverduePaymentOrders(company, helpers.getOptions(req));
     res.json(paymentOrders);
   } catch (err) {
@@ -170,7 +183,7 @@ async function listOverduePaymentOrders(req, res) {
 async function getClientsPerMonthReport(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const clientsPerMonth = await companyService.getClientsPerMonthReport(company);
     res.json(clientsPerMonth);
   } catch (err) {
@@ -182,7 +195,7 @@ async function getClientsPerMonthReport(req, res) {
 async function getClientsPerPlanReport(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const clientsPerPlan = await companyService.getClientsPerPlanReport(company);
     res.json(clientsPerPlan);
   } catch (err) {
@@ -194,7 +207,7 @@ async function getClientsPerPlanReport(req, res) {
 async function getBillingPerMonthReport(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const clientsPerPlan = await companyService.getBillingPerMonthReport(company);
     res.json(clientsPerPlan);
   } catch (err) {
@@ -210,6 +223,7 @@ module.exports = (express, app) => {
   router.get('/current', accountAuthenticated, getCompany);
   router.put('/current', accountAuthenticated, updateCompany);
   router.put('/current/logo', [accountAuthenticated, upload.single('logo')], updateCompanyLogo);
+  router.get('/current/invite', accountAuthenticated, invite);
   router.get('/current/accounts', accountAuthenticated, listAccounts);
   router.get('/current/plans', accountAuthenticated, listPlans);
   router.get('/current/clients', accountAuthenticated, listClients);

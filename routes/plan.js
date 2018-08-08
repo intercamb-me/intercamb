@@ -6,12 +6,12 @@ const companyService = require('services/company');
 const planService = require('services/plan');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
-const {Plan} = require('models');
+const {Company, Plan} = require('models');
 
 async function createPlan(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const company = await companyService.getCompany(account.company, {select: '_id'});
+    const company = new Company({id: account.company});
     const plan = await planService.createPlan(company, req.body);
     res.json(plan);
   } catch (err) {

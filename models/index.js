@@ -98,6 +98,13 @@ const Institution = new Schema({
   acronym: {type: String},
 }, {collection: 'institutions'});
 
+const Invitation = new Schema({
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
+  creator: {type: ObjectId, ref: 'Account', required: true},
+  expiration_date: {type: Date, required: true},
+  registration_date: {type: Date, required: true},
+}, {collection: 'invitations'});
+
 const PaymentOrder = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true},
   client: {type: ObjectId, ref: 'Client', required: true, index: true},
@@ -130,6 +137,7 @@ exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) =
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Company = mongoose.model('Company', normalizeSchema(Company));
 exports.Institution = mongoose.model('Institution', normalizeSchema(Institution));
+exports.Invitation = mongoose.model('Invitation', normalizeSchema(Invitation));
 exports.PaymentOrder = mongoose.model('PaymentOrder', normalizeSchema(PaymentOrder));
 exports.Plan = mongoose.model('Plan', normalizeSchema(Plan));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));

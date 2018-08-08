@@ -56,6 +56,10 @@ exports.updateCompanyLogo = async (company, logoFile) => {
   return loadedCompany.save();
 };
 
+exports.invite = async (account, company, email) => {
+
+};
+
 exports.listAccounts = async (company, options) => {
   return queries.list(Account, {company: company.id}, options);
 };

@@ -3,7 +3,7 @@
 const queries = require('database/queries');
 const brazilianStates = require('resources/brazilianStates');
 const errors = require('utils/errors');
-const {Client, Task, PaymentOrder} = require('models');
+const {Client, Task, TaskAttachment, TaskComment, PaymentOrder} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
@@ -176,12 +176,19 @@ exports.createClient = async (company, data) => {
 exports.updateClient = async (client, data) => {
   const attrs = _.omit(data, UNALLOWED_CLIENT_ATTRS);
   const loadedClient = await queries.get(Client, client.id);
+  attrs.needs_revision = false;
   loadedClient.set(attrs);
   return loadedClient.save();
 };
 
-exports.removeClient = async () => {
-
+exports.removeClient = async (client) => {
+  const tasks = await queries.list(Task, {client: client.id}, {select: '_id'});
+  const tasksIds = _.map(tasks, (task) => task.id);
+  await TaskAttachment.remove({task: tasksIds});
+  await TaskComment.remove({task: tasksIds});
+  await Task.remove({client: client.id});
+  await PaymentOrder.remove({client: client.id});
+  await Client.remove({_id: client.id});
 };
 
 exports.listTasks = async (client, options) => {

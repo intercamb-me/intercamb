@@ -16,6 +16,9 @@ const MODELS = {
   Institution: {
     notFoundError: () => errors.notFoundError('institution_not_found', 'Institution not found'),
   },
+  Invitation: {
+    notFoundError: () => errors.notFoundError('invitation_not_found', 'Invitation not found'),
+  },
   PaymentOrder: {
     notFoundError: () => errors.notFoundError('payment_order_not_found', 'Payment order not found'),
   },

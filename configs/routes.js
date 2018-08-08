@@ -2,6 +2,7 @@
 
 const accountRoutes = require('routes/account');
 const companyRoutes = require('routes/company');
+const invitationRoutes = require('routes/invitation');
 const tokenRoutes = require('routes/token');
 const planRoutes = require('routes/plan');
 const clientRoutes = require('routes/client');
@@ -13,6 +14,7 @@ exports.configure = (express, app) => {
   logger.info('Configuring routes');
   accountRoutes(express, app);
   companyRoutes(express, app);
+  invitationRoutes(express, app);
   tokenRoutes(express, app);
   planRoutes(express, app);
   clientRoutes(express, app);

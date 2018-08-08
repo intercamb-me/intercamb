@@ -3,16 +3,27 @@
 const settings = require('configs/settings');
 const {accountAuthenticated, decodeToken} = require('routes/middlewares');
 const accountService = require('services/account');
+const invitationService = require('services/invitation');
 const session = require('database/session');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
+const {Company} = require('models');
 const multer = require('multer');
 
 const upload = multer({dest: settings.uploadsPath});
 
 async function createAccount(req, res) {
   try {
-    const account = await accountService.createAccount(req.body.first_name, req.body.last_name, req.body.email, req.body.password);
+    let invitation;
+    let company;
+    if (req.query.invitation) {
+      invitation = await invitationService.getInvitation(req.query.invitation);
+      company = new Company({id: invitation.company});
+    }
+    const account = await accountService.createAccount(req.body, company);
+    if (invitation) {
+      await invitationService.removeInvitation(invitation);
+    }
     res.json(account);
   } catch (err) {
     logger.error(err);
