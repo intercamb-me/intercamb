@@ -62,6 +62,9 @@ const Account = new Schema({
   image_url: {type: String},
   registration_date: {type: Date, required: true},
 }, {collection: 'accounts'});
+Account.methods.getFullName = function () {
+  return `${this.first_name} ${this.last_name}`;
+};
 
 const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
@@ -101,6 +104,7 @@ const Institution = new Schema({
 const Invitation = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   creator: {type: ObjectId, ref: 'Account', required: true},
+  email: {type: String, required: true},
   expiration_date: {type: Date, required: true},
   registration_date: {type: Date, required: true},
 }, {collection: 'invitations'});

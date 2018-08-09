@@ -11,7 +11,7 @@ exports.getToken = async (id) => {
       path: 'company',
       select: 'name logo_url primary_color text_color',
       populate: {path: 'institutions'},
-    }
+    },
   });
   if (token.expiration_date < new Date()) {
     await Token.remove({_id: token.id});

@@ -10,4 +10,5 @@
 /node_modules
 /npm-debug.log
 /public
+/services/postman/templates/inline
 /tasks

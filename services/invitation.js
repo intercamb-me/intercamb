@@ -2,7 +2,8 @@
 
 const queries = require('database/queries');
 const errors = require('utils/errors');
-const {Invitation} = require('models');
+const postman = require('services/postman');
+const {Account, Company, Invitation} = require('models');
 const dateFns = require('date-fns');
 
 exports.getInvitation = async (id) => {
@@ -14,7 +15,11 @@ exports.getInvitation = async (id) => {
   return invitation;
 };
 
-exports.createInvitation = async (account, company, email) => {
+exports.removeInvitation = async (invitation) => {
+  await Invitation.remove({_id: invitation.id});
+};
+
+exports.invite = async (account, company, email) => {
   const invitation = new Invitation({
     email,
     creator: account.id,
@@ -22,9 +27,14 @@ exports.createInvitation = async (account, company, email) => {
     expiration_date: dateFns.addMonths(new Date(), 1),
     registration_date: new Date(),
   });
-  return invitation.save();
-};
-
-exports.removeInvitation = async (invitation) => {
-  await Invitation.remove({_id: invitation.id});
+  try {
+    const loadedAccount = await queries.get(Account, account.id);
+    const loadedCompany = await queries.get(Company, company.id);
+    await invitation.save();
+    await postman.invite(loadedAccount, loadedCompany, invitation);
+    return invitation;
+  } catch (err) {
+    await Invitation.remove({_id: invitation.id});
+    throw err;
+  }
 };

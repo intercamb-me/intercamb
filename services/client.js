@@ -183,7 +183,7 @@ exports.updateClient = async (client, data) => {
 
 exports.removeClient = async (client) => {
   const tasks = await queries.list(Task, {client: client.id}, {select: '_id'});
-  const tasksIds = _.map(tasks, (task) => task.id);
+  const tasksIds = _.map(tasks, task => task.id);
   await TaskAttachment.remove({task: tasksIds});
   await TaskComment.remove({task: tasksIds});
   await Task.remove({client: client.id});

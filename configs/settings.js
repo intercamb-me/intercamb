@@ -11,8 +11,9 @@ const config = yaml.load(path.resolve('config.yml'));
 exports.env = _.get(config, 'app.env', constants.environments.DEVELOPMENT);
 exports.port = _.get(config, 'app.port', 3000);
 exports.debug = _.get(config, 'app.debug', false);
+exports.domain = 'intercamb.me';
 
-exports.publicUrl = this.env === constants.environments.PRODUCTION ? 'https://api.intercamb.me' : `http://localhost:${this.port}`;
+exports.publicUrl = this.env === constants.environments.PRODUCTION ? `https://api.${this.domain}` : `http://localhost:${this.port}`;
 exports.publicPath = _.get(config, 'app.publicPath', path.resolve('public'));
 
 exports.uploadsUrl = `${this.publicUrl}/uploads`;
@@ -22,10 +23,10 @@ exports.mediaUrl = `${this.publicUrl}/media`;
 exports.mediaPath = path.join(this.publicPath, 'media');
 
 exports.publicS3Bucket = 'intercamb-public';
-exports.publicCDNUrl = 'https://public.intercamb.me';
+exports.publicCDNUrl = `https://public.${this.domain}`;
 
 exports.privateS3Bucket = 'intercamb-private';
-exports.privateCDNUrl = 'https://private.intercamb.me';
+exports.privateCDNUrl = `https://private.${this.domain}`;
 
 exports.session = {
   prefix: 'session:',
@@ -52,6 +53,15 @@ exports.redis = {
 exports.aws = {
   keyId: _.get(config, 'aws.keyId'),
   secret: _.get(config, 'aws.secret'),
+};
+
+exports.postman = {
+  sender: {
+    name: 'Intercamb.me',
+    email: `no-reply@${this.domain}`,
+  },
+  domain: `mail.${this.domain}`,
+  apiKey: '3e4b40087c7217c292e2f80a7fe184b9-7efe8d73-2cce5007',
 };
 
 mkdirp.sync(this.publicPath);

@@ -2,7 +2,6 @@
 
 const {accountAuthenticated, planBelongsToCompany} = require('routes/middlewares');
 const accountService = require('services/account');
-const companyService = require('services/company');
 const planService = require('services/plan');
 const errors = require('utils/errors');
 const logger = require('utils/logger');

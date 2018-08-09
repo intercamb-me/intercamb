@@ -7,11 +7,11 @@ const errors = require('utils/errors');
 const logger = require('utils/logger');
 const {Company} = require('models');
 
-async function createInvitation(req, res) {
+async function invite(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = new Company({id: account.company});
-    await invitationService.createInvitation(account, company, req.body.email);
+    await invitationService.invite(account, company, req.body.email);
     res.json({});
   } catch (err) {
     logger.error(err);
@@ -21,6 +21,6 @@ async function createInvitation(req, res) {
 
 module.exports = (express, app) => {
   const router = express.Router({mergeParams: true});
-  router.post('/', accountAuthenticated, createInvitation);
+  router.post('/', accountAuthenticated, invite);
   app.use('/invitations', router);
 };
