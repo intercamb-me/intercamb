@@ -1,6 +1,7 @@
 'use strict';
 
 const queries = require('database/queries');
+const errors = require('utils/errors');
 const files = require('utils/files');
 const {Account, Company, Client, Institution, PaymentOrder, Plan, Task} = require('models');
 const DateOnly = require('dateonly');
@@ -23,11 +24,15 @@ exports.getCompany = async (id, options) => {
 };
 
 exports.createCompany = async (account, data) => {
+  if (!data.name) throw errors.apiError('company_name_required', 'Name required');
+  if (!data.contact_email) throw errors.apiError('company_contact_email_required', 'Contact email required');
+  if (!data.contact_phone) throw errors.apiError('company_contact_phone_required', 'Contact phone required');
+  const website = data.website ? data.website.trim() : undefined;
   const company = new Company({
-    name: data.name,
-    contact_email: data.contact_email,
-    contact_phone: data.contact_phone,
-    website: data.website,
+    website,
+    name: data.name.trim(),
+    contact_email: data.contact_email.trim(),
+    contact_phone: data.contact_phone.trim(),
     owner: account.id,
     logo_url: DEFAULT_LOGO_URL,
     currency: DEFAULT_CURRENCY,

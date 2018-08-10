@@ -25,9 +25,9 @@ exports.createAccount = async (data, company) => {
   }
   const hash = await cryptography.hash(data.password);
   const account = new Account({
-    first_name: data.first_name,
-    last_name: data.last_name,
-    email: data.email,
+    first_name: data.first_name.trim(),
+    last_name: data.last_name.trim(),
+    email: data.email.trim(),
     password: hash,
     image_url: DEFAULT_IMAGE_URL,
     registration_date: new Date(),
@@ -50,10 +50,6 @@ exports.updateAccountImage = async (account, imageFile) => {
   const imageUrl = await files.uploadAccountImage(loadedAccount, imageFile.path);
   loadedAccount.image_url = imageUrl;
   return loadedAccount.save();
-};
-
-exports.removeAccount = async () => {
-
 };
 
 exports.authenticate = async (email, password) => {
