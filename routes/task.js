@@ -32,6 +32,17 @@ async function updateTask(req, res) {
   }
 }
 
+async function deleteTask(req, res) {
+  try {
+    let task = new Task({id: req.params.task});
+    task = await taskService.deleteTask(task);
+    res.json(task);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 async function addTaskComment(req, res) {
   try {
     const task = new Task({id: req.params.task});
@@ -80,6 +91,7 @@ module.exports = (express, app) => {
   const tasksRouter = express.Router({mergeParams: true});
   tasksRouter.get('/:task', [accountAuthenticated, taskBelongsToCompany], getTask);
   tasksRouter.put('/:task', [accountAuthenticated, taskBelongsToCompany], updateTask);
+  tasksRouter.delete('/:task', [accountAuthenticated, taskBelongsToCompany], deleteTask);
   tasksRouter.post('/:task/comments', [accountAuthenticated, taskBelongsToCompany], addTaskComment);
   tasksRouter.post('/:task/attachments', [accountAuthenticated, taskBelongsToCompany, upload.single('file')], addTaskAttachment);
   app.use('/tasks', tasksRouter);

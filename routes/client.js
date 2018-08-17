@@ -54,22 +54,11 @@ async function updateClient(req, res) {
   }
 }
 
-async function removeClient(req, res) {
+async function deleteClient(req, res) {
   try {
     const client = new Client({id: req.params.client});
-    await clientService.removeClient(client);
+    await clientService.deleteClient(client);
     res.json({});
-  } catch (err) {
-    logger.error(err);
-    errors.respondWithError(res, err);
-  }
-}
-
-async function listTasks(req, res) {
-  try {
-    const client = new Client({id: req.params.client});
-    const tasks = await clientService.listTasks(client);
-    res.json(tasks);
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
@@ -99,10 +88,10 @@ async function dissociatePlan(req, res) {
   }
 }
 
-async function registerPaymentOrders(req, res) {
+async function createPaymentOrders(req, res) {
   try {
     const client = new Client({id: req.params.client});
-    const paymentOrders = await clientService.registerPaymentOrders(client, req.body);
+    const paymentOrders = await clientService.createPaymentOrders(client, req.body);
     res.json(paymentOrders);
   } catch (err) {
     logger.error(err);
@@ -121,6 +110,31 @@ async function listPaymentOrders(req, res) {
   }
 }
 
+async function createTask(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = new Company({id: account.company});
+    const client = new Client({id: req.params.client});
+    const task = await clientService.createTask(company, client, req.body.name);
+    res.json(task);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function listTasks(req, res) {
+  try {
+    const client = new Client({id: req.params.client});
+    const tasks = await clientService.listTasks(client);
+    res.json(tasks);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+
 async function searchAddress(req, res) {
   try {
     const address = await clientService.searchAddress(req.params.code);
@@ -136,12 +150,13 @@ module.exports = (express, app) => {
   router.post('/', createClient);
   router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
-  router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], removeClient);
-  router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
+  router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], deleteClient);
   router.post('/:client/plans/:plan', [accountAuthenticated, clientBelongsToCompany, planBelongsToCompany], associatePlan);
   router.delete('/:client/plans', [accountAuthenticated, clientBelongsToCompany], dissociatePlan);
-  router.post('/:client/payment_orders', [accountAuthenticated, clientBelongsToCompany], registerPaymentOrders);
+  router.post('/:client/payment_orders', [accountAuthenticated, clientBelongsToCompany], createPaymentOrders);
   router.get('/:client/payment_orders', [accountAuthenticated, clientBelongsToCompany], listPaymentOrders);
+  router.post('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], createTask);
+  router.get('/:client/tasks', [accountAuthenticated, clientBelongsToCompany], listTasks);
   app.use('/clients', router);
 
   app.get('/zip_codes/:code', searchAddress);

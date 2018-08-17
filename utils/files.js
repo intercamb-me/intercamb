@@ -35,8 +35,7 @@ async function processImage(inputFile, outputFile, options) {
   return transformer.toFile(outputFile);
 }
 
-async function uploadMedia(sourcePath, file, options, publicMode) {
-  let fileUrl = null;
+async function uploadToS3(sourcePath, file, options, publicMode) {
   const relativePath = path.join(file.relativeDir, file.name);
   if (settings.env === constants.environments.PRODUCTION) {
     const cdnUrl = publicMode ? settings.publicCDNUrl : settings.privateCDNUrl;
@@ -53,22 +52,50 @@ async function uploadMedia(sourcePath, file, options, publicMode) {
       Body: await fs.readFileAsync(finalPath),
       ContentType: file.mimeType,
     }).promise();
-    fileUrl = `${cdnUrl}/${relativePath}`;
     await fs.unlinkAsync(sourcePath);
     await fs.unlinkAsync(finalPath);
-  } else {
-    const finalDir = path.join(settings.mediaPath, file.relativeDir);
-    const finalPath = path.join(settings.mediaPath, relativePath);
-    if (await isImage(file)) {
-      await mkdirp.mkdirpAsync(finalDir);
-      await processImage(sourcePath, finalPath, options);
-      await fs.unlinkAsync(sourcePath);
-    } else {
-      await fs.renameAsync(sourcePath, finalPath);
-    }
-    fileUrl = `${settings.mediaUrl}/${relativePath}`;
+    return `${cdnUrl}/${relativePath}`;
   }
-  return fileUrl;
+
+  const finalDir = path.join(settings.mediaPath, file.relativeDir);
+  const finalPath = path.join(settings.mediaPath, relativePath);
+  await mkdirp.mkdirpAsync(finalDir);
+  if (await isImage(file)) {
+    await processImage(sourcePath, finalPath, options);
+    await fs.unlinkAsync(sourcePath);
+  } else {
+    await fs.renameAsync(sourcePath, finalPath);
+  }
+  return `${settings.mediaUrl}/${relativePath}`;
+}
+
+async function deleteFromS3(relativePath, publicMode) {
+  if (settings.env === constants.environments.PRODUCTION) {
+    const bucket = publicMode ? settings.publicS3Bucket : settings.privateS3Bucket;
+    const objects = await s3.listObjectsV2({
+      Bucket: bucket,
+      Prefix: relativePath,
+    }).promise();
+    if (objects.Contents.length === 0) {
+      return;
+    }
+    const deleteParams = {
+      Bucket: bucket,
+      Delete: {
+        Objects: [],
+      },
+    };
+    objects.Contents.forEach(({Key}) => {
+      deleteParams.Delete.Objects.push({Key});
+    });
+    await s3.deleteObjects(deleteParams).promise();
+    if (objects.Contents.IsTruncated) {
+      await deleteFromS3(relativePath, publicMode);
+    }
+  } else {
+    const finalPath = path.join(settings.mediaPath, relativePath);
+    await fs.unlinkAsync(finalPath);
+  }
 }
 
 exports.uploadCompanyLogo = async (company, logoPath) => {
@@ -81,7 +108,7 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
     png: true,
     dimension: COMPANY_LOGO_DIMENSION,
   };
-  return uploadMedia(logoPath, file, options, true);
+  return uploadToS3(logoPath, file, options, true);
 };
 
 exports.uploadAccountImage = async (account, imagePath) => {
@@ -94,7 +121,7 @@ exports.uploadAccountImage = async (account, imagePath) => {
     png: true,
     dimension: ACCOUNT_IMAGE_DIMENSION,
   };
-  return uploadMedia(imagePath, file, options, true);
+  return uploadToS3(imagePath, file, options, true);
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {
@@ -107,7 +134,12 @@ exports.uploadClientPhoto = async (client, photoPath) => {
     png: true,
     dimension: CLIENT_PHOTO_DIMENSION,
   };
-  return uploadMedia(photoPath, file, options, true);
+  return uploadToS3(photoPath, file, options, true);
+};
+
+exports.deleteClientMedia = async (client) => {
+  const relativePath = path.join('clients', client.id);
+  await deleteFromS3(relativePath, false);
 };
 
 exports.uploadTaskAttachment = async (task, taskFile) => {
@@ -116,7 +148,7 @@ exports.uploadTaskAttachment = async (task, taskFile) => {
     relativeDir: path.join('clients', task.client.toString(), 'tasks', task.id),
     mimeType: taskFile.mimeType,
   };
-  await uploadMedia(taskFile.path, file);
+  await uploadToS3(taskFile.path, file);
   return file.name;
 };
 
@@ -129,4 +161,9 @@ exports.getTaskAttachment = async (task, attachment) => {
     }).promise();
   }
   return fs.readFileAsync(path.join(settings.mediaPath, relativePath));
+};
+
+exports.deleteTaskMedia = async (task) => {
+  const relativePath = path.join('clients', task.client.toString(), 'tasks', task.id);
+  await deleteFromS3(relativePath, false);
 };

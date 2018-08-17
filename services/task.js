@@ -18,6 +18,14 @@ exports.updateTask = async (task, data) => {
   return loadedTask.save();
 };
 
+exports.deleteTask = async (task) => {
+  const loadedTask = await queries.get(Task, task.id, {select: 'client'});
+  await TaskAttachment.remove({task: loadedTask.id});
+  await TaskComment.remove({task: loadedTask.id});
+  await Task.remove({_id: loadedTask.id});
+  await files.deleteTaskMedia(loadedTask);
+};
+
 exports.addTaskComment = async (account, task, text) => {
   const loadedTask = await queries.get(Task, task.id, {select: '_id'});
   const comment = new TaskComment({

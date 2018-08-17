@@ -3,6 +3,7 @@
 const queries = require('database/queries');
 const brazilianStates = require('resources/brazilianStates');
 const errors = require('utils/errors');
+const files = require('utils/files');
 const {Client, Task, TaskAttachment, TaskComment, PaymentOrder} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
@@ -17,7 +18,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Contrato',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -29,7 +29,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Identidade',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -41,7 +40,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Passaporte',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -53,7 +51,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Certidão de nascimento',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -65,7 +62,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Certificado de ensino médio',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -77,7 +73,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Histórico do ensino médio',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -89,7 +84,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Inscrição no curso',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -101,7 +95,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Recepção',
     status: 'pending',
-    schedulable: true,
     counters: {
       attachments: 0,
       comments: 0,
@@ -113,7 +106,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Antecedentes criminais',
     status: 'pending',
-    schedulable: false,
     counters: {
       attachments: 0,
       comments: 0,
@@ -125,7 +117,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Antecedentes criminais (Argentina)',
     status: 'pending',
-    schedulable: true,
     counters: {
       attachments: 0,
       comments: 0,
@@ -137,7 +128,6 @@ async function createTasks(company, client) {
     client: client.id,
     name: 'Identidade (Argentina)',
     status: 'pending',
-    schedulable: true,
     counters: {
       attachments: 0,
       comments: 0,
@@ -181,14 +171,32 @@ exports.updateClient = async (client, data) => {
   return loadedClient.save();
 };
 
-exports.removeClient = async (client) => {
-  const tasks = await queries.list(Task, {client: client.id}, {select: '_id'});
+exports.deleteClient = async (client) => {
+  const loadedClient = await queries.get(Client, client.id, {select: '_id'});
+  const tasks = await queries.list(Task, {client: loadedClient.id}, {select: '_id'});
   const tasksIds = _.map(tasks, task => task.id);
   await TaskAttachment.remove({task: tasksIds});
   await TaskComment.remove({task: tasksIds});
-  await Task.remove({client: client.id});
-  await PaymentOrder.remove({client: client.id});
-  await Client.remove({_id: client.id});
+  await Task.remove({client: loadedClient.id});
+  await PaymentOrder.remove({client: loadedClient.id});
+  await Client.remove({_id: loadedClient.id});
+  await files.deleteClientMedia(loadedClient);
+};
+
+exports.createTask = async (company, client, name) => {
+  const task = new Task({
+    name,
+    company: company.id,
+    client: client.id,
+    status: 'pending',
+    counters: {
+      attachments: 0,
+      comments: 0,
+    },
+    registration_date: new Date(),
+  });
+  await task.save();
+  return task;
 };
 
 exports.listTasks = async (client, options) => {
@@ -207,7 +215,7 @@ exports.dissociatePlan = async (client) => {
   return loadedClient.save();
 };
 
-exports.registerPaymentOrders = async (client, paymentOrders) => {
+exports.createPaymentOrders = async (client, paymentOrders) => {
   const loadedClient = await queries.get(Client, client.id);
   const orders = [];
   _.forEach(paymentOrders, (paymentOrder) => {
