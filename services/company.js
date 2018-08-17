@@ -10,7 +10,8 @@ const _ = require('lodash');
 
 const DEFAULT_LOGO_URL = 'https://cdn.intercamb.me/images/company_default_logo.png';
 const DEFAULT_CURRENCY = 'BRL';
-const ALLOWED_ATTRS = ['name', 'contact_email', 'contact_phone', 'website', 'primary_color', 'text_color', 'institutions'];
+const DEFAULT_TASKS = ['Contrato', 'Identidade', 'Passaporte', 'Certidão de nascimento', 'Certificado de ensino médio', 'Histórico do ensino médio', 'Inscrição no curso', 'Recepção', 'Antecedentes criminais', 'Antecedentes criminais (Argentina)', 'Identidade (Argentina)'];
+const ALLOWED_ATTRS = ['name', 'contact_email', 'contact_phone', 'website', 'primary_color', 'text_color', 'default_tasks', 'institutions'];
 
 exports.listAllInstitutions = async () => {
   const institutions = await queries.list(Institution);
@@ -36,6 +37,7 @@ exports.createCompany = async (account, data) => {
     owner: account.id,
     logo_url: DEFAULT_LOGO_URL,
     currency: DEFAULT_CURRENCY,
+    default_tasks: DEFAULT_TASKS,
     registration_date: new Date(),
   });
   await company.save();

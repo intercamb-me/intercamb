@@ -4,7 +4,7 @@ const queries = require('database/queries');
 const brazilianStates = require('resources/brazilianStates');
 const errors = require('utils/errors');
 const files = require('utils/files');
-const {Client, Task, TaskAttachment, TaskComment, PaymentOrder} = require('models');
+const {Client, Company, PaymentOrder, Task, TaskAttachment, TaskComment} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
@@ -12,141 +12,23 @@ const DEFAULT_PHOTO_URL = 'https://cdn.intercamb.me/images/client_default_photo.
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
 
 async function createTasks(company, client) {
+  const loadedCompany = await queries.get(Company, company.id, {select: 'default_tasks'});
   const now = new Date();
-  const contract = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Contrato',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
+  const tasks = [];
+  loadedCompany.default_tasks.forEach((defaultTask) => {
+    tasks.push(new Task({
+      company: loadedCompany.id,
+      client: client.id,
+      name: defaultTask,
+      status: 'pending',
+      counters: {
+        attachments: 0,
+        comments: 0,
+      },
+      registration_date: now,
+    }));
   });
-  const identityCard = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Identidade',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const passport = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Passaporte',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const birthCertificate = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Certidão de nascimento',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const highSchoolCertificate = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Certificado de ensino médio',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const highSchoolHistoric = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Histórico do ensino médio',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const courseEnrolment = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Inscrição no curso',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const reception = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Recepção',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const nativeCriminalRecords = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Antecedentes criminais',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const foreignCriminalRecords = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Antecedentes criminais (Argentina)',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  const foreignIdentity = new Task({
-    company: company.id,
-    client: client.id,
-    name: 'Identidade (Argentina)',
-    status: 'pending',
-    counters: {
-      attachments: 0,
-      comments: 0,
-    },
-    registration_date: now,
-  });
-  return Task.insertMany([
-    contract,
-    identityCard,
-    passport,
-    birthCertificate,
-    highSchoolCertificate,
-    highSchoolHistoric,
-    courseEnrolment,
-    reception,
-    nativeCriminalRecords,
-    foreignCriminalRecords,
-    foreignIdentity,
-  ]);
+  return Task.insertMany(tasks);
 }
 
 exports.getClient = async (id, options) => {
