@@ -27,6 +27,29 @@ const TaskCounters = new Schema({
   comments: {type: Number, required: true},
 }, {_id: false});
 
+const PlaceComponent = new Schema({
+  name: {type: String},
+  short_name: {type: String},
+}, {_id: false});
+
+const PlaceLocation = new Schema({
+  lat: {type: Number},
+  lng: {type: Number},
+}, {_id: false});
+
+const TaskPlace = new Schema({
+  formatted_address: {type: String},
+  street_number: {type: String},
+  route: {type: String},
+  sublocality: {type: String},
+  admin_area: {type: PlaceComponent},
+  country: {type: PlaceComponent},
+  postal_code: {type: String},
+  postal_code_suffix: {type: String},
+  url: {type: String},
+  location: {type: PlaceLocation},
+}, {_id: false});
+
 const Task = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   client: {type: ObjectId, ref: 'Client', required: true, index: true},
@@ -34,6 +57,7 @@ const Task = new Schema({
   status: {type: String, required: true},
   schedule_date: {type: Date},
   counters: {type: TaskCounters, required: true},
+  place: {type: TaskPlace},
   registration_date: {type: Date, required: true},
 }, {collection: 'tasks'});
 Task.virtual('attachments', {

@@ -35,7 +35,7 @@ async function processImage(inputFile, outputFile, options) {
   return transformer.toFile(outputFile);
 }
 
-async function uploadToS3(sourcePath, file, options, publicMode) {
+async function uploadFile(sourcePath, file, options, publicMode) {
   const relativePath = path.join(file.relativeDir, file.name);
   if (settings.env === constants.environments.PRODUCTION) {
     const cdnUrl = publicMode ? settings.publicCDNUrl : settings.privateCDNUrl;
@@ -69,7 +69,7 @@ async function uploadToS3(sourcePath, file, options, publicMode) {
   return `${settings.mediaUrl}/${relativePath}`;
 }
 
-async function deleteFromS3(relativePath, publicMode) {
+async function deleteFile(relativePath, publicMode) {
   if (settings.env === constants.environments.PRODUCTION) {
     const bucket = publicMode ? settings.publicS3Bucket : settings.privateS3Bucket;
     const objects = await s3.listObjectsV2({
@@ -90,11 +90,15 @@ async function deleteFromS3(relativePath, publicMode) {
     });
     await s3.deleteObjects(deleteParams).promise();
     if (objects.Contents.IsTruncated) {
-      await deleteFromS3(relativePath, publicMode);
+      await deleteFile(relativePath, publicMode);
     }
   } else {
-    const finalPath = path.join(settings.mediaPath, relativePath);
-    await fs.unlinkAsync(finalPath);
+    try {
+      const finalPath = path.join(settings.mediaPath, relativePath);
+      await fs.unlinkAsync(finalPath);
+    } catch (err) {
+      // Nothing to do...
+    }
   }
 }
 
@@ -108,7 +112,7 @@ exports.uploadCompanyLogo = async (company, logoPath) => {
     png: true,
     dimension: COMPANY_LOGO_DIMENSION,
   };
-  return uploadToS3(logoPath, file, options, true);
+  return uploadFile(logoPath, file, options, true);
 };
 
 exports.uploadAccountImage = async (account, imagePath) => {
@@ -121,7 +125,7 @@ exports.uploadAccountImage = async (account, imagePath) => {
     png: true,
     dimension: ACCOUNT_IMAGE_DIMENSION,
   };
-  return uploadToS3(imagePath, file, options, true);
+  return uploadFile(imagePath, file, options, true);
 };
 
 exports.uploadClientPhoto = async (client, photoPath) => {
@@ -134,12 +138,12 @@ exports.uploadClientPhoto = async (client, photoPath) => {
     png: true,
     dimension: CLIENT_PHOTO_DIMENSION,
   };
-  return uploadToS3(photoPath, file, options, true);
+  return uploadFile(photoPath, file, options, true);
 };
 
 exports.deleteClientMedia = async (client) => {
   const relativePath = path.join('clients', client.id);
-  await deleteFromS3(relativePath, false);
+  await deleteFile(relativePath, false);
 };
 
 exports.uploadTaskAttachment = async (task, taskFile) => {
@@ -148,7 +152,7 @@ exports.uploadTaskAttachment = async (task, taskFile) => {
     relativeDir: path.join('clients', task.client.toString(), 'tasks', task.id),
     mimeType: taskFile.mimeType,
   };
-  await uploadToS3(taskFile.path, file);
+  await uploadFile(taskFile.path, file);
   return file.name;
 };
 
@@ -165,5 +169,5 @@ exports.getTaskAttachment = async (task, attachment) => {
 
 exports.deleteTaskMedia = async (task) => {
   const relativePath = path.join('clients', task.client.toString(), 'tasks', task.id);
-  await deleteFromS3(relativePath, false);
+  await deleteFile(relativePath, false);
 };
