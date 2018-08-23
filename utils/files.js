@@ -144,6 +144,7 @@ exports.uploadClientPhoto = async (client, photoPath) => {
 exports.deleteClientMedia = async (client) => {
   const relativePath = path.join('clients', client.id);
   await deleteFile(relativePath, false);
+  await deleteFile(relativePath, true);
 };
 
 exports.uploadTaskAttachment = async (task, taskFile) => {
