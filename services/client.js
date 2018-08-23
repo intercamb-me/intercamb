@@ -53,6 +53,13 @@ exports.updateClient = async (client, data) => {
   return loadedClient.save();
 };
 
+exports.updateClientPhoto = async (client, photoFile) => {
+  const loadedClient = await queries.get(Client, client.id);
+  const photoUrl = await files.uploadClientPhoto(loadedClient, photoFile.path);
+  loadedClient.photo_url = photoUrl;
+  return loadedClient.save();
+};
+
 exports.deleteClient = async (client) => {
   const loadedClient = await queries.get(Client, client.id, {select: '_id'});
   const tasks = await queries.list(Task, {client: loadedClient.id}, {select: '_id'});

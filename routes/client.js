@@ -1,5 +1,6 @@
 'use strict';
 
+const settings = require('configs/settings');
 const {accountAuthenticated, clientBelongsToCompany, planBelongsToCompany} = require('routes/middlewares');
 const helpers = require('routes/helpers');
 const accountService = require('services/account');
@@ -8,6 +9,9 @@ const tokenService = require('services/token');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
 const {Company, Client, Plan} = require('models');
+const multer = require('multer');
+
+const upload = multer({dest: settings.uploadsPath});
 
 async function createClient(req, res) {
   try {
@@ -47,6 +51,17 @@ async function updateClient(req, res) {
   try {
     let client = new Client({id: req.params.client});
     client = await clientService.updateClient(client, req.body);
+    res.json(client);
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
+async function updateClientPhoto(req, res) {
+  try {
+    let client = new Client({id: req.params.client});
+    client = await clientService.updateClientPhoto(client, req.file);
     res.json(client);
   } catch (err) {
     logger.error(err);
@@ -150,6 +165,7 @@ module.exports = (express, app) => {
   router.post('/', createClient);
   router.get('/:client', [accountAuthenticated, clientBelongsToCompany], getClient);
   router.put('/:client', [accountAuthenticated, clientBelongsToCompany], updateClient);
+  router.put('/:client/photo', [accountAuthenticated, clientBelongsToCompany, upload.single('photo')], updateClientPhoto);
   router.delete('/:client', [accountAuthenticated, clientBelongsToCompany], deleteClient);
   router.post('/:client/plans/:plan', [accountAuthenticated, clientBelongsToCompany, planBelongsToCompany], associatePlan);
   router.delete('/:client/plans', [accountAuthenticated, clientBelongsToCompany], dissociatePlan);
