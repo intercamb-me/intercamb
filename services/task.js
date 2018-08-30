@@ -40,7 +40,7 @@ exports.addTaskComment = async (account, task, text) => {
 };
 
 exports.addTaskAttachment = async (account, task, file) => {
-  const loadedTask = await queries.get(Task, task.id, {select: '_id client'});
+  const loadedTask = await queries.get(Task, task.id, {select: 'client'});
   const filename = await files.uploadTaskAttachment(loadedTask, file);
   const attachment = new TaskAttachment({
     task: loadedTask.id,
@@ -62,6 +62,6 @@ exports.getTaskAttachment = async (id) => {
 
 exports.getTaskAttachmentBuffer = async (id) => {
   const loadedAttachment = await queries.get(TaskAttachment, id);
-  const loadedTask = await queries.get(Task, loadedAttachment.task, {select: '_id client'});
+  const loadedTask = await queries.get(Task, loadedAttachment.task, {select: 'client'});
   return files.getTaskAttachment(loadedTask, loadedAttachment);
 };

@@ -165,7 +165,9 @@ exports.getTaskAttachment = async (task, attachment) => {
     return s3.getObject({
       Bucket: settings.privateS3Bucket,
       Key: relativePath,
-    }).promise();
+    }).promise().then((object) => {
+      return object.Body;
+    });
   }
   return fs.readFileAsync(path.join(settings.mediaPath, relativePath));
 };
