@@ -42,7 +42,7 @@ async function uploadFile(sourcePath, file, options, publicMode) {
     const bucket = publicMode ? settings.publicS3Bucket : settings.privateS3Bucket;
     const sourceDir = path.dirname(sourcePath);
     const sourceFileName = path.basename(sourcePath);
-    const finalPath = path.join(sourceDir, `${sourceFileName}_${Date.now()}`);
+    const finalPath = await isImage(file) ? path.join(sourceDir, `${sourceFileName}_${Date.now()}`) : sourcePath;
     if (await isImage(file)) {
       await processImage(sourcePath, finalPath, options);
     }
@@ -53,7 +53,9 @@ async function uploadFile(sourcePath, file, options, publicMode) {
       ContentType: file.mimeType,
     }).promise();
     await fs.unlinkAsync(sourcePath);
-    await fs.unlinkAsync(finalPath);
+    if (await isImage(file)) {
+      await fs.unlinkAsync(finalPath);
+    }
     return `${cdnUrl}/${relativePath}`;
   }
 
