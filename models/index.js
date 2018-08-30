@@ -3,7 +3,7 @@
 const settings = require('configs/settings');
 const logger = require('utils/logger');
 const {Client} = require('models/client');
-const {Task, TaskComment, TaskAttachment} = require('models/task');
+const {Task, TaskAttachment, TaskChecklist, TaskComment} = require('models/task');
 const mongoose = require('mongoose');
 const DateOnly = require('mongoose-dateonly')(mongoose);
 const Promise = require('bluebird');
@@ -66,6 +66,11 @@ Account.methods.getFullName = function () {
   return `${this.first_name} ${this.last_name}`;
 };
 
+const DefaultTask = new Schema({
+  name: {type: String, required: true},
+  checklists: {type: [TaskChecklist]},
+}, {_id: false});
+
 const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
   name: {type: String, required: true},
@@ -76,7 +81,7 @@ const Company = new Schema({
   currency: {type: String},
   primary_color: {type: String},
   text_color: {type: String},
-  default_tasks: {type: [String]},
+  default_tasks: {type: [DefaultTask]},
   institutions: [{type: ObjectId, ref: 'Institution'}],
   registration_date: {type: Date, required: true},
 }, {collection: 'companies'});
@@ -124,6 +129,7 @@ const Plan = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   name: {type: String, required: true},
   price: {type: Number, required: true},
+  default_tasks: {type: [DefaultTask]},
   registration_date: {type: Date, required: true},
 }, {collection: 'plans'});
 
@@ -147,5 +153,6 @@ exports.PaymentOrder = mongoose.model('PaymentOrder', normalizeSchema(PaymentOrd
 exports.Plan = mongoose.model('Plan', normalizeSchema(Plan));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));
 exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment));
+exports.TaskChecklist = mongoose.model('TaskChecklist', normalizeSchema(TaskChecklist));
 exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));
 exports.Token = mongoose.model('Token', normalizeSchema(Token));

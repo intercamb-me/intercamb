@@ -4,15 +4,24 @@ const queries = require('database/queries');
 const brazilianStates = require('resources/brazilianStates');
 const errors = require('utils/errors');
 const files = require('utils/files');
-const {Client, Company, PaymentOrder, Task, TaskAttachment, TaskComment} = require('models');
+const {Client, Company, PaymentOrder, Plan, Task, TaskAttachment, TaskComment} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.intercamb.me/images/client_default_photo.png';
 const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
 
-async function createTasks(company, client) {
+exports.getClient = async (id, options) => {
+  return queries.get(Client, id, options);
+};
+
+exports.createClient = async (company, data) => {
   const loadedCompany = await queries.get(Company, company.id, {select: 'default_tasks'});
+  const client = new Client(data);
+  client.company = loadedCompany.id;
+  client.registration_date = new Date();
+  client.photo_url = DEFAULT_PHOTO_URL;
+  await client.save();
   const now = new Date();
   const tasks = [];
   loadedCompany.default_tasks.forEach((defaultTask) => {
@@ -28,20 +37,7 @@ async function createTasks(company, client) {
       registration_date: now,
     }));
   });
-  return Task.insertMany(tasks);
-}
-
-exports.getClient = async (id, options) => {
-  return queries.get(Client, id, options);
-};
-
-exports.createClient = async (company, data) => {
-  const client = new Client(data);
-  client.company = company.id;
-  client.registration_date = new Date();
-  client.photo_url = DEFAULT_PHOTO_URL;
-  await client.save();
-  await createTasks(company, client);
+  await Task.insertMany(tasks);
   return client;
 };
 
@@ -93,15 +89,40 @@ exports.listTasks = async (client, options) => {
 };
 
 exports.associatePlan = async (client, plan) => {
+  const loadedPlan = await queries.get(Plan, plan.id, {select: 'default_tasks'});
   const loadedClient = await queries.get(Client, client.id);
-  loadedClient.plan = plan.id;
-  return loadedClient.save();
+  if (loadedClient.plan) {
+    await Task.remove({client: loadedClient.id, plan: loadedClient.plan});
+  }
+  loadedClient.plan = loadedPlan.id;
+  await loadedClient.save();
+  const now = new Date();
+  const tasks = [];
+  loadedPlan.default_tasks.forEach((defaultTask) => {
+    tasks.push(new Task({
+      company: loadedClient.company,
+      client: client.id,
+      plan: loadedPlan.id,
+      name: defaultTask,
+      status: 'pending',
+      counters: {
+        attachments: 0,
+        comments: 0,
+      },
+      registration_date: now,
+    }));
+  });
+  await Task.insertMany(tasks);
 };
 
 exports.dissociatePlan = async (client) => {
   const loadedClient = await queries.get(Client, client.id);
-  loadedClient.plan = null;
-  return loadedClient.save();
+  if (loadedClient.plan) {
+    const planId = loadedClient.plan;
+    loadedClient.plan = null;
+    await loadedClient.save();
+    await Task.remove({client: loadedClient.id, plan: planId});
+  }
 };
 
 exports.createPaymentOrders = async (client, paymentOrders) => {

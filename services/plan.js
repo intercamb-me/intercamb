@@ -4,7 +4,7 @@ const queries = require('database/queries');
 const {Plan, Client} = require('models');
 const _ = require('lodash');
 
-const ALLOWED_ATTRS = ['name', 'price'];
+const ALLOWED_ATTRS = ['name', 'price', 'default_tasks'];
 
 exports.getPlan = async (id, options) => {
   return queries.get(Plan, id, options);
