@@ -16,14 +16,14 @@
     "publish-dist": "node tasks/publish.js"
   },
   "devDependencies": {
-    "eslint": "5.3.0",
+    "eslint": "5.4.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
     "release-n-publish": "0.0.6"
   },
   "dependencies": {
     "app-module-path": "2.2.0",
-    "aws-sdk": "2.295.0",
+    "aws-sdk": "2.306.0",
     "bcrypt": "3.0.0",
     "bluebird": "3.5.1",
     "body-parser": "1.18.3",
@@ -43,14 +43,14 @@
     "lodash": "4.17.10",
     "mailgun-js": "0.20.0",
     "mkdirp": "0.5.1",
-    "mongoose": "5.2.8",
+    "mongoose": "5.2.12",
     "mongoose-dateonly": "1.0.6",
     "morgan": "1.9.0",
     "multer": "1.3.1",
     "nunjucks": "3.1.3",
     "redis": "2.8.0",
     "rimraf": "2.6.2",
-    "sharp": "0.20.5",
+    "sharp": "0.20.7",
     "winston": "3.0.0",
     "yamljs": "0.3.0"
   }

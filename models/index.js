@@ -20,6 +20,7 @@ if (settings.mongo.username && settings.mongo.password) {
 
 mongoose.Promise = Promise;
 mongoose.set('debug', settings.mongo.debug);
+mongoose.set('useCreateIndex', true);
 mongoose.connect(`mongodb://${settings.mongo.host}:${settings.mongo.port}/${settings.mongo.schema}`, options).catch((err) => {
   logger.error('Could not connect to MongoDB.', err);
   process.exit(1);
