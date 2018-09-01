@@ -3,7 +3,7 @@
 const settings = require('configs/settings');
 const logger = require('utils/logger');
 const {Client} = require('models/client');
-const {Task, TaskAttachment, TaskChecklist, TaskComment} = require('models/task');
+const {Task, TaskAttachment, TaskChecklist, TaskComment, TaskField} = require('models/task');
 const mongoose = require('mongoose');
 const DateOnly = require('mongoose-dateonly')(mongoose);
 const Promise = require('bluebird');
@@ -69,6 +69,8 @@ Account.methods.getFullName = function () {
 
 const DefaultTask = new Schema({
   name: {type: String, required: true},
+  checklists: {type: [TaskChecklist]},
+  fields: {type: [TaskField]},
   checklists: {type: [TaskChecklist]},
 }, {_id: false});
 
@@ -156,4 +158,5 @@ exports.Task = mongoose.model('Task', normalizeSchema(Task));
 exports.TaskAttachment = mongoose.model('TaskAttachment', normalizeSchema(TaskAttachment));
 exports.TaskChecklist = mongoose.model('TaskChecklist', normalizeSchema(TaskChecklist));
 exports.TaskComment = mongoose.model('TaskComment', normalizeSchema(TaskComment));
+exports.TaskField = mongoose.model('TaskField', normalizeSchema(TaskField));
 exports.Token = mongoose.model('Token', normalizeSchema(Token));

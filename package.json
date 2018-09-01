@@ -16,14 +16,14 @@
     "publish-dist": "node tasks/publish.js"
   },
   "devDependencies": {
-    "eslint": "5.4.0",
+    "eslint": "5.5.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
     "release-n-publish": "0.0.6"
   },
   "dependencies": {
     "app-module-path": "2.2.0",
-    "aws-sdk": "2.306.0",
+    "aws-sdk": "2.307.0",
     "bcrypt": "3.0.0",
     "bluebird": "3.5.1",
     "body-parser": "1.18.3",

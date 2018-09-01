@@ -60,6 +60,12 @@ const TaskChecklist = new Schema({
   items: {type: [ChecklistItem]},
 }, {_id: false});
 
+const TaskField = new Schema({
+  name: {type: String, required: true},
+  type: {type: String, required: true},
+  value: {type: String},
+}, {_id: false});
+
 const Task = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   client: {type: ObjectId, ref: 'Client', required: true, index: true},
@@ -68,8 +74,9 @@ const Task = new Schema({
   status: {type: String, required: true},
   schedule_date: {type: Date},
   counters: {type: TaskCounters, required: true},
-  place: {type: TaskPlace},
   checklists: {type: [TaskChecklist]},
+  fields: {type: [TaskField]},
+  place: {type: TaskPlace},
   registration_date: {type: Date, required: true},
 }, {collection: 'tasks'});
 Task.virtual('attachments', {
@@ -87,3 +94,5 @@ exports.Task = Task;
 exports.TaskAttachment = TaskAttachment;
 exports.TaskChecklist = TaskChecklist;
 exports.TaskComment = TaskComment;
+exports.TaskComment = TaskComment;
+exports.TaskField = TaskField;
