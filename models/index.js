@@ -71,7 +71,6 @@ const DefaultTask = new Schema({
   name: {type: String, required: true},
   checklists: {type: [TaskChecklist]},
   fields: {type: [TaskField]},
-  checklists: {type: [TaskChecklist]},
 }, {_id: false});
 
 const Company = new Schema({

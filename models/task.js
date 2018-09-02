@@ -27,7 +27,7 @@ const TaskCounters = new Schema({
   comments: {type: Number, required: true},
 }, {_id: false});
 
-const PlaceComponent = new Schema({
+const PlaceItem = new Schema({
   name: {type: String},
   short_name: {type: String},
 }, {_id: false});
@@ -42,8 +42,8 @@ const TaskPlace = new Schema({
   street_number: {type: String},
   route: {type: String},
   sublocality: {type: String},
-  admin_area: {type: PlaceComponent},
-  country: {type: PlaceComponent},
+  admin_area: {type: PlaceItem},
+  country: {type: PlaceItem},
   postal_code: {type: String},
   postal_code_suffix: {type: String},
   url: {type: String},

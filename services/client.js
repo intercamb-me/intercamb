@@ -28,8 +28,10 @@ exports.createClient = async (company, data) => {
     tasks.push(new Task({
       company: loadedCompany.id,
       client: client.id,
-      name: defaultTask,
+      name: defaultTask.name,
       status: 'pending',
+      checklists: defaultTask.checklists,
+      fields: defaultTask.fields,
       counters: {
         attachments: 0,
         comments: 0,
@@ -103,8 +105,10 @@ exports.associatePlan = async (client, plan) => {
       company: loadedClient.company,
       client: client.id,
       plan: loadedPlan.id,
-      name: defaultTask,
+      name: defaultTask.name,
       status: 'pending',
+      checklists: defaultTask.checklists,
+      fields: defaultTask.fields,
       counters: {
         attachments: 0,
         comments: 0,
