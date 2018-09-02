@@ -53,7 +53,7 @@ const TaskPlace = new Schema({
 const ChecklistItem = new Schema({
   name: {type: String, required: true},
   done: {type: Boolean},
-}, {_id: false})
+}, {_id: false});
 
 const TaskChecklist = new Schema({
   title: {type: String, required: true},
