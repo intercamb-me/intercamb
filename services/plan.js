@@ -1,10 +1,10 @@
 'use strict';
 
 const queries = require('database/queries');
-const {Plan, Client} = require('models');
+const {Client, DefaultTask, Plan} = require('models');
 const _ = require('lodash');
 
-const ALLOWED_ATTRS = ['name', 'price', 'default_tasks'];
+const ALLOWED_ATTRS = ['name', 'price'];
 
 exports.getPlan = async (id, options) => {
   return queries.get(Plan, id, options);
@@ -28,7 +28,8 @@ exports.updatePlan = async (plan, data) => {
 };
 
 exports.deletePlan = async (plan) => {
-  await Client.update({plan: plan.id}, {plan: null});
   const loadedPlan = await queries.get(Plan, plan.id);
+  await Client.updateMany({plan: plan.id}, {plan: null});
+  await DefaultTask.remove({plan: plan.id});
   await loadedPlan.remove();
 };

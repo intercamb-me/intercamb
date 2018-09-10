@@ -67,12 +67,6 @@ Account.methods.getFullName = function () {
   return `${this.first_name} ${this.last_name}`;
 };
 
-const DefaultTask = new Schema({
-  name: {type: String, required: true},
-  checklists: {type: [TaskChecklist]},
-  fields: {type: [TaskField]},
-}, {_id: false});
-
 const Company = new Schema({
   owner: {type: ObjectId, ref: 'Account', required: true},
   name: {type: String, required: true},
@@ -83,12 +77,16 @@ const Company = new Schema({
   currency: {type: String},
   primary_color: {type: String},
   text_color: {type: String},
-  default_tasks: {type: [DefaultTask]},
   institutions: [{type: ObjectId, ref: 'Institution'}],
   registration_date: {type: Date, required: true},
 }, {collection: 'companies'});
 Company.virtual('accounts', {
   ref: 'Account',
+  localField: '_id',
+  foreignField: 'company',
+});
+Company.virtual('default_tasks', {
+  ref: 'DefaultTask',
   localField: '_id',
   foreignField: 'company',
 });
@@ -102,6 +100,15 @@ Company.virtual('tokens', {
   localField: '_id',
   foreignField: 'company',
 });
+
+const DefaultTask = new Schema({
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
+  plan: {type: ObjectId, ref: 'Plan', index: true},
+  name: {type: String, required: true},
+  registration_date: {type: Date, required: true},
+  checklists: {type: [TaskChecklist]},
+  fields: {type: [TaskField]},
+}, {collection: 'default_tasks'});
 
 const Institution = new Schema({
   country: {type: String, required: true},
@@ -131,9 +138,13 @@ const Plan = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   name: {type: String, required: true},
   price: {type: Number, required: true},
-  default_tasks: {type: [DefaultTask]},
   registration_date: {type: Date, required: true},
 }, {collection: 'plans'});
+Plan.virtual('default_tasks', {
+  ref: 'DefaultTask',
+  localField: '_id',
+  foreignField: 'plan',
+});
 
 const Token = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
@@ -149,6 +160,7 @@ exports.Account = mongoose.model('Account', normalizeSchema(Account, (account) =
 }));
 exports.Client = mongoose.model('Client', normalizeSchema(Client));
 exports.Company = mongoose.model('Company', normalizeSchema(Company));
+exports.DefaultTask = mongoose.model('DefaultTask', normalizeSchema(DefaultTask));
 exports.Institution = mongoose.model('Institution', normalizeSchema(Institution));
 exports.Invitation = mongoose.model('Invitation', normalizeSchema(Invitation));
 exports.PaymentOrder = mongoose.model('PaymentOrder', normalizeSchema(PaymentOrder));

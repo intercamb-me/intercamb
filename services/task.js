@@ -5,14 +5,14 @@ const files = require('utils/files');
 const {Task, TaskComment, TaskAttachment} = require('models');
 const _ = require('lodash');
 
-const UNALLOWED_TASK_ATTRS = ['_id', 'id', 'company', 'client', 'attachments', 'comments', 'registration_date'];
+const ALLOWED_ATTRS = ['name', 'status', 'schedule_date', 'checklists', 'fields', 'place'];
 
 exports.getTask = async (id, options) => {
   return queries.get(Task, id, options);
 };
 
 exports.updateTask = async (task, data) => {
-  const attrs = _.omit(data, UNALLOWED_TASK_ATTRS);
+  const attrs = _.pick(data, ALLOWED_ATTRS);
   const loadedTask = await queries.get(Task, task.id);
   loadedTask.set(attrs);
   return loadedTask.save();

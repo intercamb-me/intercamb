@@ -1,10 +1,11 @@
 'use strict';
 
 const accountService = require('services/account');
-const planService = require('services/plan');
 const clientService = require('services/client');
-const taskService = require('services/task');
+const defaultTaskService = require('services/defaultTask');
+const planService = require('services/plan');
 const paymentService = require('services/payment');
+const taskService = require('services/task');
 const session = require('database/session');
 const errors = require('utils/errors');
 const logger = require('utils/logger');
@@ -48,6 +49,22 @@ exports.clientBelongsToCompany = async (req, res, next) => {
     errors.respondWithError(res, err);
   }
 };
+
+exports.defaultTaskBelongsToCompany = async (req, res, next) => {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const defaultTask = await defaultTaskService.getDefaultTask(req.params.default_task, {select: 'company'});
+    if (defaultTask.company.toString() !== account.company.toString()) {
+      errors.respondWithError(res, errors.notFoundError('default_task_not_found', 'Task not found'));
+      return;
+    }
+    next();
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+};
+
 
 exports.taskBelongsToCompany = async (req, res, next) => {
   try {

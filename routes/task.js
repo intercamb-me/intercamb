@@ -94,9 +94,6 @@ module.exports = (express, app) => {
   tasksRouter.delete('/:task', [accountAuthenticated, taskBelongsToCompany], deleteTask);
   tasksRouter.post('/:task/comments', [accountAuthenticated, taskBelongsToCompany], addTaskComment);
   tasksRouter.post('/:task/attachments', [accountAuthenticated, taskBelongsToCompany, upload.single('file')], addTaskAttachment);
+  tasksRouter.get('/attachments/:attachment/file', [accountAuthenticated, attachmentBelongsToCompany], getTaskAttachmentFile);
   app.use('/tasks', tasksRouter);
-
-  const attachmentsRouter = express.Router({mergeParams: true});
-  attachmentsRouter.get('/:attachment/file', [accountAuthenticated, attachmentBelongsToCompany], getTaskAttachmentFile);
-  app.use('/attachments', attachmentsRouter);
 };

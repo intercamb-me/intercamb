@@ -9,14 +9,14 @@ const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
 const DEFAULT_PHOTO_URL = 'https://cdn.intercamb.me/images/client_default_photo.png';
-const UNALLOWED_CLIENT_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
+const UNALLOWED_ATTRS = ['_id', 'id', 'company', 'photo_url', 'registration_date'];
 
 exports.getClient = async (id, options) => {
   return queries.get(Client, id, options);
 };
 
 exports.createClient = async (company, data) => {
-  const loadedCompany = await queries.get(Company, company.id, {select: 'default_tasks'});
+  const loadedCompany = await queries.get(Company, company.id, {select: '_id', populate: 'default_tasks'});
   const client = new Client(data);
   client.company = loadedCompany.id;
   client.registration_date = new Date();
@@ -44,7 +44,7 @@ exports.createClient = async (company, data) => {
 };
 
 exports.updateClient = async (client, data) => {
-  const attrs = _.omit(data, UNALLOWED_CLIENT_ATTRS);
+  const attrs = _.omit(data, UNALLOWED_ATTRS);
   const loadedClient = await queries.get(Client, client.id);
   attrs.needs_revision = false;
   loadedClient.set(attrs);
@@ -82,8 +82,7 @@ exports.createTask = async (company, client, name) => {
     },
     registration_date: new Date(),
   });
-  await task.save();
-  return task;
+  return task.save();
 };
 
 exports.listTasks = async (client, options) => {
@@ -91,8 +90,8 @@ exports.listTasks = async (client, options) => {
 };
 
 exports.associatePlan = async (client, plan) => {
-  const loadedPlan = await queries.get(Plan, plan.id, {select: 'default_tasks'});
-  const loadedClient = await queries.get(Client, client.id);
+  const loadedPlan = await queries.get(Plan, plan.id, {select: '_id', populate: 'default_tasks'});
+  const loadedClient = await queries.get(Client, client.id, {select: 'company plan'});
   if (loadedClient.plan) {
     await Task.remove({client: loadedClient.id, plan: loadedClient.plan});
   }
@@ -120,7 +119,7 @@ exports.associatePlan = async (client, plan) => {
 };
 
 exports.dissociatePlan = async (client) => {
-  const loadedClient = await queries.get(Client, client.id);
+  const loadedClient = await queries.get(Client, client.id, {select: 'plan'});
   if (loadedClient.plan) {
     const planId = loadedClient.plan;
     loadedClient.plan = null;
@@ -130,7 +129,7 @@ exports.dissociatePlan = async (client) => {
 };
 
 exports.createPaymentOrders = async (client, paymentOrders) => {
-  const loadedClient = await queries.get(Client, client.id);
+  const loadedClient = await queries.get(Client, client.id, {select: 'company'});
   const orders = [];
   _.forEach(paymentOrders, (paymentOrder) => {
     const order = new PaymentOrder({
