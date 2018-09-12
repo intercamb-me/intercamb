@@ -1,7 +1,6 @@
 'use strict';
 
 const queries = require('database/queries');
-const files = require('utils/files');
 const {DefaultTask} = require('models');
 const _ = require('lodash');
 
@@ -11,9 +10,10 @@ exports.getDefaultTask = async (id, options) => {
   return queries.get(DefaultTask, id, options);
 };
 
-exports.createDefaultTask = async (company, name) => {
+exports.createDefaultTask = async (company, data) => {
   const defaultTask = new DefaultTask({
-    name,
+    name: data.name,
+    plan: data.plan,
     company: company.id,
     registration_date: new Date(),
   });

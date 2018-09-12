@@ -93,7 +93,13 @@ exports.associatePlan = async (client, plan) => {
   const loadedPlan = await queries.get(Plan, plan.id, {select: '_id', populate: 'default_tasks'});
   const loadedClient = await queries.get(Client, client.id, {select: 'company plan'});
   if (loadedClient.plan) {
-    await Task.remove({client: loadedClient.id, plan: loadedClient.plan});
+    const planTasks = await queries.list(Task, {client: loadedClient.id, plan: loadedClient.plan}, {select: 'client'});
+    const deleteMediaPromises = [];
+    planTasks.forEach((planTask) => {
+      deleteMediaPromises.push(files.deleteTaskMedia(planTask));
+    });
+    await Promise.all(deleteMediaPromises);
+    await Task.remove(planTasks);
   }
   loadedClient.plan = loadedPlan.id;
   await loadedClient.save();

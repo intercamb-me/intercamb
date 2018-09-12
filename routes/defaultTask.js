@@ -12,7 +12,7 @@ async function createDefaultTask(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = new Company({id: account.company});
-    const defaultTask = await defaultTaskService.createDefaultTask(company, req.body.name);
+    const defaultTask = await defaultTaskService.createDefaultTask(company, req.body);
     res.json(defaultTask);
   } catch (err) {
     logger.error(err);

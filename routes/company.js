@@ -83,7 +83,7 @@ async function listAccounts(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = new Company({id: account.company});
-    const accounts = await companyService.listAccounts(company);
+    const accounts = await companyService.listAccounts(company, helpers.getOptions(req));
     res.json(accounts);
   } catch (err) {
     logger.error(err);
@@ -95,8 +95,8 @@ async function listPlans(req, res) {
   try {
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
     const company = new Company({id: account.company});
-    const clients = await companyService.listPlans(company);
-    res.json(clients);
+    const plans = await companyService.listPlans(company, helpers.getOptions(req));
+    res.json(plans);
   } catch (err) {
     logger.error(err);
     errors.respondWithError(res, err);
