@@ -20,9 +20,9 @@ exports.updateTask = async (task, data) => {
 
 exports.deleteTask = async (task) => {
   const loadedTask = await queries.get(Task, task.id, {select: 'client'});
-  await TaskAttachment.remove({task: loadedTask.id});
-  await TaskComment.remove({task: loadedTask.id});
-  await Task.remove({_id: loadedTask.id});
+  await TaskAttachment.deleteMany({task: loadedTask.id});
+  await TaskComment.deleteMany({task: loadedTask.id});
+  await loadedTask.remove();
   await files.deleteTaskMedia(loadedTask);
 };
 

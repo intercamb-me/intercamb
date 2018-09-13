@@ -31,6 +31,6 @@ exports.deletePlan = async (plan) => {
   const loadedPlan = await queries.get(Plan, plan.id);
   await Task.updateMany({plan: loadedPlan.id}, {plan: null});
   await Client.updateMany({plan: loadedPlan.id}, {plan: null});
-  await DefaultTask.remove({plan: loadedPlan.id});
+  await DefaultTask.deleteMany({plan: loadedPlan.id});
   await loadedPlan.remove();
 };

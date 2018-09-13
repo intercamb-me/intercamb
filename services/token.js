@@ -14,7 +14,7 @@ exports.getToken = async (id) => {
     },
   });
   if (token.expiration_date < new Date()) {
-    await Token.remove({_id: token.id});
+    await token.remove();
     throw errors.notFoundError('token_expired', 'Token expired');
   }
   return token;
@@ -33,5 +33,5 @@ exports.createToken = async (account, company, identifier, type) => {
 };
 
 exports.removeToken = async (token) => {
-  await Token.remove({_id: token.id});
+  await token.remove();
 };

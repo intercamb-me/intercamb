@@ -9,14 +9,14 @@ const dateFns = require('date-fns');
 exports.getInvitation = async (id) => {
   const invitation = await queries.get(Invitation, id);
   if (invitation.expiration_date < new Date()) {
-    await Invitation.remove({_id: invitation.id});
+    await invitation.remove();
     throw errors.notFoundError('invitation_expired', 'Invitation expired');
   }
   return invitation;
 };
 
 exports.removeInvitation = async (invitation) => {
-  await Invitation.remove({_id: invitation.id});
+  await invitation.remove();
 };
 
 exports.invite = async (account, company, email) => {
@@ -34,7 +34,7 @@ exports.invite = async (account, company, email) => {
     await postman.invite(loadedAccount, loadedCompany, invitation);
     return invitation;
   } catch (err) {
-    await Invitation.remove({_id: invitation.id});
+    await invitation.remove();
     throw err;
   }
 };

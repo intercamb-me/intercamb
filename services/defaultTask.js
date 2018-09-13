@@ -29,5 +29,5 @@ exports.updateDefaultTask = async (defaultDefaultTask, data) => {
 
 exports.deleteDefaultTask = async (defaultDefaultTask) => {
   const loadedDefaultTask = await queries.get(DefaultTask, defaultDefaultTask.id, {select: 'client'});
-  await DefaultTask.remove({_id: loadedDefaultTask.id});
+  await loadedDefaultTask.remove();
 };

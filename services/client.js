@@ -4,7 +4,7 @@ const queries = require('database/queries');
 const brazilianStates = require('resources/brazilianStates');
 const errors = require('utils/errors');
 const files = require('utils/files');
-const {Client, Company, PaymentOrder, Plan, Task, TaskAttachment, TaskComment} = require('models');
+const {Client, Company, DefaultTask, PaymentOrder, Plan, Task, TaskAttachment, TaskComment} = require('models');
 const cepPromise = require('cep-promise');
 const _ = require('lodash');
 
@@ -16,15 +16,21 @@ exports.getClient = async (id, options) => {
 };
 
 exports.createClient = async (company, data) => {
-  const loadedCompany = await queries.get(Company, company.id, {select: '_id', populate: 'default_tasks'});
+  const loadedCompany = await queries.get(Company, company.id, {select: '_id'});
+  const defaultTasks = await queries.list(DefaultTask, (query) => {
+    query.where('company').equals(loadedCompany.id);
+    query.or([
+      {plan: {$exists: false}},
+      {plan: {$eq: null}},
+    ]);
+  });
   const client = new Client(data);
   client.company = loadedCompany.id;
   client.registration_date = new Date();
   client.photo_url = DEFAULT_PHOTO_URL;
-  await client.save();
   const now = new Date();
   const tasks = [];
-  loadedCompany.default_tasks.forEach((defaultTask) => {
+  defaultTasks.forEach((defaultTask) => {
     tasks.push(new Task({
       company: loadedCompany.id,
       client: client.id,
@@ -39,6 +45,7 @@ exports.createClient = async (company, data) => {
       registration_date: now,
     }));
   });
+  await client.save();
   await Task.insertMany(tasks);
   return client;
 };
@@ -62,11 +69,11 @@ exports.deleteClient = async (client) => {
   const loadedClient = await queries.get(Client, client.id, {select: '_id'});
   const tasks = await queries.list(Task, {client: loadedClient.id}, {select: '_id'});
   const tasksIds = _.map(tasks, task => task.id);
-  await TaskAttachment.remove({task: tasksIds});
-  await TaskComment.remove({task: tasksIds});
-  await Task.remove({client: loadedClient.id});
-  await PaymentOrder.remove({client: loadedClient.id});
-  await Client.remove({_id: loadedClient.id});
+  await TaskAttachment.deleteMany({task: tasksIds});
+  await TaskComment.deleteMany({task: tasksIds});
+  await Task.deleteMany({client: loadedClient.id});
+  await PaymentOrder.deleteMany({client: loadedClient.id});
+  await loadedClient.remove();
   await files.deleteClientMedia(loadedClient);
 };
 
@@ -99,7 +106,7 @@ exports.associatePlan = async (client, plan) => {
       deleteMediaPromises.push(files.deleteTaskMedia(planTask));
     });
     await Promise.all(deleteMediaPromises);
-    await Task.remove(planTasks);
+    await Task.deleteMany({_id: _.map(planTasks, task => task.id)});
   }
   loadedClient.plan = loadedPlan.id;
   await loadedClient.save();
@@ -130,7 +137,7 @@ exports.dissociatePlan = async (client) => {
     const planId = loadedClient.plan;
     loadedClient.plan = null;
     await loadedClient.save();
-    await Task.remove({client: loadedClient.id, plan: planId});
+    await Task.deleteMany({client: loadedClient.id, plan: planId});
   }
 };
 
