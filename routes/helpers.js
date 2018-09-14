@@ -51,7 +51,7 @@ function fixPopulate(populate) {
 
 function fixSort(sort) {
   if (!sort) {
-    return;
+    return undefined;
   }
   const fixedSort = {};
   _.forEach(sort.split(' '), (sortStr) => {
