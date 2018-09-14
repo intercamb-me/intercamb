@@ -65,6 +65,19 @@ function fillQuery(query, options) {
   if (filledOptions.limit) {
     query.limit(filledOptions.limit);
   }
+  if (filledOptions.last) {
+    let desc = false;
+    if (filledOptions.sort) {
+      desc = _.find(filledOptions.sort, (order) => {
+        return order === -1;
+      }) === -1;
+    }
+    if (!desc) {
+      query.where('_id').gt(filledOptions.last);
+    } else {
+      query.where('_id').lt(filledOptions.last);
+    }
+  }
   if (filledOptions.lean) {
     query.lean();
   }

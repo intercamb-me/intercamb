@@ -9,7 +9,7 @@ function fillPopulate(populate, populateStr) {
   const populateTrees = [];
   _.forEach(populateStr.split(' '), (populatePath) => {
     const populateTree = {};
-    let currentPath = null;s
+    let currentPath = null;
     _.forEach(populatePath.split('.'), (field) => {
       currentPath = currentPath ? `${currentPath}.populate[${field}]` : field;
       _.set(populateTree, currentPath, {path: field.replace(/>/g, '.'), select: []});
@@ -49,16 +49,37 @@ function fixPopulate(populate) {
   return fixedPopulate;
 }
 
+function fixSort(sort) {
+  if (!sort) {
+    return;
+  }
+  const fixedSort = {};
+  _.forEach(sort.split(' '), (sortStr) => {
+    const sortSplit = sortStr.split(':');
+    const field = sortSplit[0];
+    if (sortSplit.length > 1) {
+      const order = sortSplit[1];
+      fixedSort[field] = order === 'desc' ? -1 : 1;
+    } else {
+      fixedSort[field] = 1;
+    }
+  });
+  return fixedSort;
+}
+
 exports.getOptions = (req) => {
   const populate = {};
   const select = [];
   fillPopulate(populate, req.query.populate);
   fillSelect(select, populate, req.query.select);
-  return {
+  const options = {
     select,
     populate: fixPopulate(populate),
-    sort: req.query.sort,
+    sort: fixSort(req.query.sort),
     last: req.query.last,
-    limit: req.query.limit,
   };
+  if (req.query.limit) {
+    options.limit = parseInt(req.query.limit);
+  }
+  return options;
 };

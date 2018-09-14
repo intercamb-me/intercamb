@@ -86,7 +86,6 @@ exports.listClients = async (company, ids, options) => {
     if (ids) {
       query.where('_id').in(ids);
     }
-    query.sort('-registration_date');
   }, options);
 };
 
