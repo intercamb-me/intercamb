@@ -6,7 +6,6 @@ const {DefaultTask} = require('models');
 const mongoose = require('mongoose');
 
 const {Schema} = mongoose;
-const {ObjectId} = Schema.Types;
 
 const OldChecklistItem = new Schema({
   name: String,
@@ -36,7 +35,7 @@ const OldCompanySchema = new Schema({
 
 const OldCompany = mongoose.model('OldCompany', OldCompanySchema);
 
-(async function () {
+async function execute() {
   const companies = await OldCompany.find().exec();
   const defaultTasks = [];
   companies.forEach((company) => {
@@ -49,4 +48,5 @@ const OldCompany = mongoose.model('OldCompany', OldCompanySchema);
   });
   await DefaultTask.insertMany(defaultTasks);
   process.exit(1);
-})();
+}
+execute();
