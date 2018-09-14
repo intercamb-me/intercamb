@@ -9,7 +9,7 @@ function fillPopulate(populate, populateStr) {
   const populateTrees = [];
   _.forEach(populateStr.split(' '), (populatePath) => {
     const populateTree = {};
-    let currentPath = null;
+    let currentPath = null;s
     _.forEach(populatePath.split('.'), (field) => {
       currentPath = currentPath ? `${currentPath}.populate[${field}]` : field;
       _.set(populateTree, currentPath, {path: field.replace(/>/g, '.'), select: []});
@@ -58,6 +58,7 @@ exports.getOptions = (req) => {
     select,
     populate: fixPopulate(populate),
     sort: req.query.sort,
+    last: req.query.last,
     limit: req.query.limit,
   };
 };
