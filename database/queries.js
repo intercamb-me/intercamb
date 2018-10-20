@@ -13,6 +13,9 @@ const MODELS = {
   Company: {
     notFoundError: () => errors.notFoundError('company_not_found', 'Company not found'),
   },
+  MessageTemplate: {
+    notFoundError: () => errors.notFoundError('default_message_not_found', 'Default message not found'),
+  },
   DefaultTask: {
     notFoundError: () => errors.notFoundError('default_task_not_found', 'Default task not found'),
   },

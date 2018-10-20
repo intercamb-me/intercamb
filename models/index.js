@@ -90,6 +90,11 @@ Company.virtual('default_tasks', {
   localField: '_id',
   foreignField: 'company',
 });
+Company.virtual('message_templates', {
+  ref: 'MessageTemplate',
+  localField: '_id',
+  foreignField: 'company',
+});
 Company.virtual('plans', {
   ref: 'Plan',
   localField: '_id',
@@ -101,13 +106,21 @@ Company.virtual('tokens', {
   foreignField: 'company',
 });
 
+const MessageTemplate = new Schema({
+  company: {type: ObjectId, ref: 'Company', required: true, index: true},
+  identifier: {type: String, required: true},
+  title: {type: String, required: true},
+  template: {type: String, required: true},
+  registration_date: {type: Date, required: true},
+}, {collection: 'message_templates'});
+
 const DefaultTask = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   plan: {type: ObjectId, ref: 'Plan', index: true},
   name: {type: String, required: true},
-  registration_date: {type: Date, required: true},
   checklists: {type: [TaskChecklist]},
   fields: {type: [TaskField]},
+  registration_date: {type: Date, required: true},
 }, {collection: 'default_tasks'});
 
 const Institution = new Schema({
@@ -163,6 +176,7 @@ exports.Company = mongoose.model('Company', normalizeSchema(Company));
 exports.DefaultTask = mongoose.model('DefaultTask', normalizeSchema(DefaultTask));
 exports.Institution = mongoose.model('Institution', normalizeSchema(Institution));
 exports.Invitation = mongoose.model('Invitation', normalizeSchema(Invitation));
+exports.MessageTemplate = mongoose.model('MessageTemplate', normalizeSchema(MessageTemplate));
 exports.PaymentOrder = mongoose.model('PaymentOrder', normalizeSchema(PaymentOrder));
 exports.Plan = mongoose.model('Plan', normalizeSchema(Plan));
 exports.Task = mongoose.model('Task', normalizeSchema(Task));

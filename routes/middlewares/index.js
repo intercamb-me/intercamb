@@ -3,6 +3,7 @@
 const accountService = require('services/account');
 const clientService = require('services/client');
 const defaultTaskService = require('services/defaultTask');
+const messageTemplateService = require('services/messageTemplate');
 const planService = require('services/plan');
 const paymentService = require('services/payment');
 const taskService = require('services/task');
@@ -65,6 +66,20 @@ exports.defaultTaskBelongsToCompany = async (req, res, next) => {
   }
 };
 
+exports.messageTemplateBelongsToCompany = async (req, res, next) => {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const messageTemplate = await messageTemplateService.getMessageTemplate(req.params.message_template, {select: 'company'});
+    if (messageTemplate.company.toString() !== account.company.toString()) {
+      errors.respondWithError(res, errors.notFoundError('message_template_not_found', 'Message template not found'));
+      return;
+    }
+    next();
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+};
 
 exports.taskBelongsToCompany = async (req, res, next) => {
   try {

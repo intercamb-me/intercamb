@@ -5,6 +5,7 @@ const clientRoutes = require('routes/client');
 const companyRoutes = require('routes/company');
 const defaultTaskRoutes = require('routes/defaultTask');
 const invitationRoutes = require('routes/invitation');
+const messageTemplateRoutes = require('routes/messageTemplate');
 const paymentRoutes = require('routes/payment');
 const planRoutes = require('routes/plan');
 const taskRoutes = require('routes/task');
@@ -18,6 +19,7 @@ exports.configure = (express, app) => {
   companyRoutes(express, app);
   defaultTaskRoutes(express, app);
   invitationRoutes(express, app);
+  messageTemplateRoutes(express, app);
   paymentRoutes(express, app);
   planRoutes(express, app);
   taskRoutes(express, app);

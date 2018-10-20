@@ -20,14 +20,14 @@ exports.createDefaultTask = async (company, data) => {
   return defaultTask.save();
 };
 
-exports.updateDefaultTask = async (defaultDefaultTask, data) => {
+exports.updateDefaultTask = async (defaultTask, data) => {
   const attrs = _.pick(data, ALLOWED_ATTRS);
-  const loadedDefaultTask = await queries.get(DefaultTask, defaultDefaultTask.id);
+  const loadedDefaultTask = await queries.get(DefaultTask, defaultTask.id, {select: '_id'});
   loadedDefaultTask.set(attrs);
   return loadedDefaultTask.save();
 };
 
-exports.deleteDefaultTask = async (defaultDefaultTask) => {
-  const loadedDefaultTask = await queries.get(DefaultTask, defaultDefaultTask.id, {select: 'client'});
+exports.deleteDefaultTask = async (defaultTask) => {
+  const loadedDefaultTask = await queries.get(DefaultTask, defaultTask.id, {select: '_id'});
   await loadedDefaultTask.remove();
 };
