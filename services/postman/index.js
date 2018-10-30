@@ -45,7 +45,35 @@ function render(template, variables) {
   });
 }
 
-function send(from, to, subject, html) {
+async function renderAndSend(toEmail, templateName, subjectContext, templateContext) {
+  let {subject} = emails[templateName];
+  if (subjectContext) {
+    subjectContext.unshift(subject);
+    subject = util.format.apply(this, subjectContext);
+  }
+  const template = templates[templateName];
+  const sender = this.formatEmail(settings.postman.sender.name, settings.postman.sender.email);
+  const renderization = await render(template, templateContext);
+  await this.send(sender, toEmail, subject, renderization);
+}
+
+exports.formatEmail = (name, email) => {
+  return `${name} <${email}>`;
+};
+
+exports.renderString = async (text, context) => {
+  return new Promise((resolve, reject) => {
+    nunjucks.renderString(text, context, (err, renderization) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(renderization);
+      }
+    });
+  });
+};
+
+exports.send = async (from, to, subject, html) => {
   return new Promise((resolve, reject) => {
     mailClient.messages().send({from, to, subject, html}, (err, body) => {
       if (err) {
@@ -55,22 +83,10 @@ function send(from, to, subject, html) {
       }
     });
   });
-}
-
-async function renderAndSend(toEmail, templateName, subjectVariables, templateVariables) {
-  let {subject} = emails[templateName];
-  if (subjectVariables) {
-    subjectVariables.unshift(subject);
-    subject = util.format.apply(this, subjectVariables);
-  }
-  const template = templates[templateName];
-  const sender = `${settings.postman.sender.name} <${settings.postman.sender.email}>`;
-  const renderization = await render(template, templateVariables);
-  await send(sender, toEmail, subject, renderization);
-}
+};
 
 exports.invite = async (account, company, invitation) => {
-  const subjectVariables = [account.getFullName()];
-  const templateVariables = {account, company, invitation};
-  await renderAndSend(invitation.email, INVITATION_TEMPLATE, subjectVariables, templateVariables);
+  const subjectContext = [account.getFullName()];
+  const templateContext = {account, company, invitation};
+  await renderAndSend(invitation.email, INVITATION_TEMPLATE, subjectContext, templateContext);
 };

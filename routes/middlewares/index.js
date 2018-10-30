@@ -38,8 +38,9 @@ exports.accountAuthenticated = async (req, res, next) => {
 
 exports.clientBelongsToCompany = async (req, res, next) => {
   try {
+    const clientId = req.params.client || req.body.client;
     const account = await accountService.getAccount(req.account.id, {select: 'company'});
-    const client = await clientService.getClient(req.params.client, {select: 'company'});
+    const client = await clientService.getClient(clientId, {select: 'company'});
     if (client.company.toString() !== account.company.toString()) {
       errors.respondWithError(res, errors.notFoundError('client_not_found', 'Client not found'));
       return;

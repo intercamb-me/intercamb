@@ -110,7 +110,7 @@ const MessageTemplate = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   identifier: {type: String, required: true},
   title: {type: String, required: true},
-  template: {type: String, required: true},
+  body: {type: String, required: true},
   registration_date: {type: Date, required: true},
 }, {collection: 'message_templates'});
 
