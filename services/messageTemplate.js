@@ -2,7 +2,6 @@
 
 const queries = require('database/queries');
 const postman = require('services/postman');
-const errors = require('utils/errors');
 const {Client, MessageTemplate} = require('models');
 const _ = require('lodash');
 
@@ -50,11 +49,10 @@ exports.deleteMessageTemplate = async (messageTemplate) => {
 exports.sendMessageTemplate = async (messageTemplate, client) => {
   const loadedMessageTemplate = await queries.get(MessageTemplate, messageTemplate.id);
   const loadedClient = await queries.get(Client, client.id, {select: '_id forename surname email phone metadata', populate: 'company'});
-  const company = loadedClient.company;
   const context = getEmailContext(loadedClient);
   const title = await postman.renderString(loadedMessageTemplate.title, context);
   const body = await postman.renderString(loadedMessageTemplate.body, context);
-  const fromEmail = postman.formatEmail(company.name, company.contact_email);
+  const fromEmail = postman.formatEmail(loadedClient.company.name, loadedClient.company.contact_email);
   const toEmail = postman.formatEmail(loadedClient.forename, loadedClient.email);
   await postman.send(fromEmail, toEmail, title, body);
   loadedClient.metadata.messages_sent.push(loadedMessageTemplate.id);
