@@ -90,6 +90,10 @@ const AdditionalInformation = new Schema({
   how_did_you_know_the_company: {type: String},
 }, {_id: false});
 
+const Metadata = new Schema({
+  messages_sent: {type: [String]},
+}, {_id: false});
+
 const Client = new Schema({
   company: {type: ObjectId, ref: 'Company', required: true, index: true},
   plan: {type: ObjectId, ref: 'Plan'},
@@ -107,6 +111,7 @@ const Client = new Schema({
   academic_data: {type: AcademicData},
   intended_course: {type: IntendedCourse},
   additional_information: {type: AdditionalInformation},
+  metadata: {type: Metadata},
 }, {collection: 'clients'});
 Client.virtual('payment_orders', {
   ref: 'PaymentOrder',

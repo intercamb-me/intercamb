@@ -49,7 +49,7 @@ exports.deleteMessageTemplate = async (messageTemplate) => {
 
 exports.sendMessageTemplate = async (messageTemplate, client) => {
   const loadedMessageTemplate = await queries.get(MessageTemplate, messageTemplate.id);
-  const loadedClient = await queries.get(Client, client.id, {select: '_id forename surname email phone', populate: 'company'});
+  const loadedClient = await queries.get(Client, client.id, {select: '_id forename surname email phone metadata', populate: 'company'});
   const company = loadedClient.company;
   const context = getEmailContext(loadedClient);
   const title = await postman.renderString(loadedMessageTemplate.title, context);
@@ -57,4 +57,6 @@ exports.sendMessageTemplate = async (messageTemplate, client) => {
   const fromEmail = postman.formatEmail(company.name, company.contact_email);
   const toEmail = postman.formatEmail(loadedClient.forename, loadedClient.email);
   await postman.send(fromEmail, toEmail, title, body);
+  loadedClient.metadata.messages_sent.push(loadedMessageTemplate.id);
+  await loadedClient.save();
 };

@@ -28,6 +28,9 @@ exports.createClient = async (company, data) => {
   client.company = loadedCompany.id;
   client.registration_date = new Date();
   client.photo_url = DEFAULT_PHOTO_URL;
+  client.metadata = {
+    messages_sent: [],
+  };
   const now = new Date();
   const tasks = [];
   defaultTasks.forEach((defaultTask) => {
