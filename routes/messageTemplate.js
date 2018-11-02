@@ -64,6 +64,18 @@ async function sendMessageTemplate(req, res) {
   }
 }
 
+async function testMessageTemplate(req, res) {
+  try {
+    const account = await accountService.getAccount(req.account.id, {select: 'company'});
+    const company = new Company({id: account.company});
+    await messageTemplateService.testMessageTemplate(company, req.body.email, req.body.template);
+    res.json({});
+  } catch (err) {
+    logger.error(err);
+    errors.respondWithError(res, err);
+  }
+}
+
 module.exports = (express, app) => {
   const messageTemplatesRouter = express.Router({mergeParams: true});
   messageTemplatesRouter.post('', [accountAuthenticated], createMessageTemplate);
@@ -71,5 +83,6 @@ module.exports = (express, app) => {
   messageTemplatesRouter.put('/:message_template', [accountAuthenticated, messageTemplateBelongsToCompany], updateMessageTemplate);
   messageTemplatesRouter.delete('/:message_template', [accountAuthenticated, messageTemplateBelongsToCompany], deleteMessageTemplate);
   messageTemplatesRouter.post('/:message_template/send', [accountAuthenticated, messageTemplateBelongsToCompany, clientBelongsToCompany], sendMessageTemplate);
+  messageTemplatesRouter.post('/test', [accountAuthenticated], testMessageTemplate);
   app.use('/message_templates', messageTemplatesRouter);
 };
